@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="ClaimReports" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Projection" application="BAS" cacheInvalidationPeriod="NONE" enforceSqlExecution="true">
+<descriptions defaultDescription="ClaimReports.hdbcalculationview"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="MYSERVICE_CLAIM_DETAILS">
+    <resourceUri>MYSERVICE_CLAIM_DETAILS</resourceUri>
+  </DataSource>
+</dataSources>
+<snapshotProcedures/>
+<calculationViews/>
+<logicalModel id="MYSERVICE_CLAIM_DETAILS">
+  <attributes>
+    <attribute id="CLAIM_ID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CLAIM_ID"/>
+      <keyMapping columnObjectName="MYSERVICE_CLAIM_DETAILS" columnName="CLAIM_ID"/>
+    </attribute>
+    <attribute id="PERSON_NUMBER" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PERSON_NUMBER"/>
+      <keyMapping columnObjectName="MYSERVICE_CLAIM_DETAILS" columnName="PERSON_NUMBER"/>
+    </attribute>
+    <attribute id="CLAIM_TYPE" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CLAIM_TYPE"/>
+      <keyMapping columnObjectName="MYSERVICE_CLAIM_DETAILS" columnName="CLAIM_TYPE"/>
+    </attribute>
+    <attribute id="TREATMENT_FOR" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TREATMENT_FOR"/>
+      <keyMapping columnObjectName="MYSERVICE_CLAIM_DETAILS" columnName="TREATMENT_FOR"/>
+    </attribute>
+    <attribute id="SELECT_DEPENDENTS" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SELECT_DEPENDENTS"/>
+      <keyMapping columnObjectName="MYSERVICE_CLAIM_DETAILS" columnName="SELECT_DEPENDENTS"/>
+    </attribute>
+    <attribute id="REQUESTED_AMOUNT" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQUESTED_AMOUNT"/>
+      <keyMapping columnObjectName="MYSERVICE_CLAIM_DETAILS" columnName="REQUESTED_AMOUNT"/>
+    </attribute>
+    <attribute id="TREATMENT_FOR_IF_OTHERS" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TREATMENT_FOR_IF_OTHERS"/>
+      <keyMapping columnObjectName="MYSERVICE_CLAIM_DETAILS" columnName="TREATMENT_FOR_IF_OTHERS"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="STATUS" order="7" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="13">
+        <formula>'SUBMITTED'</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+    <calculatedAttribute id="APPROVED_AMOUNT" order="8" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="INTEGER" expressionLanguage="SQL">
+        <formula>0</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>
