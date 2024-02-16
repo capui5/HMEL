@@ -124,6 +124,6 @@ service MyService {
 
     // function validations() returns String;
     function validations(endDate : Date, startDate : Date, requestedAmount : Integer, category : String) returns Integer;
-    function policydetails(PolicyNumber : String, startDatePicker1 : Date)                               returns String;
+    function policyValidations(policyNumber : String, startDate: Date)                               returns String;
 
 }
