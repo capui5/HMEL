@@ -1239,8 +1239,68 @@
                 id="detail1"
                 title="Manage Claim"
                 backgroundDesign="Solid"
+                showNavButton="{= !${device>/system/desktop}}"
+                navButtonPress=".onPressDetailBack"
+                class="detailPage"
             >
-                <Label text="Manage Claims" />
+                <Table
+                    id="managetable"
+                    inset="false"
+                    mode="SingleSelect"
+                    alternateRowColors="true"
+                    items="{MainModel>/ClaimReports}"
+                >
+                    <columns>
+                        <Column>
+                            <Text text="Claim ID" />
+                        </Column>
+                        <Column
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                        >
+                            <Text text="Person Number" />
+                        </Column>
+                        <Column
+                            minScreenWidth="Desktop"
+                            demandPopin="true"
+                            width="12em"
+                        >
+                            <Text text="Claim Type" />
+                        </Column>
+                        <Column
+                            minScreenWidth="Desktop"
+                            demandPopin="true"
+                            width="12em"
+                        >
+                            <Text text="Treatment For" />
+                        </Column>
+
+                        <Column
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                        >
+                            <Text text="Select Dependents" />
+                        </Column>
+                        <Column
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                        >
+                            <Text text="Requested Amount" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem vAlign="Middle">
+                            <cells>
+                                <Text text="{MainModel>CLAIM_ID}" />
+                                <Text text="{MainModel>PERSON_NUMBER}" />
+                                <Text text="{MainModel>CLAIM_TYPE}" />
+                                <Text text="{MainModel>TREATMENT_FOR}" />
+                                <Text text="{MainModel>SELECT_DEPENDENTS}" />
+                                <Text text="{MainModel>REQUESTED_AMOUNT}" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
             </Page>
             <Page
                 id="detail2"
@@ -1250,133 +1310,6 @@
                 navButtonPress=".onPressDetailBack"
                 class="detailPage"
             >
-                <!-- <VBox class="sapUiSmallMargin">
-                                    <f:Form
-                                        id="FormDisplay354wideDual1"
-                                        editable="false"
-                                    >
-                                        <f:layout>
-                                            <f:ResponsiveGridLayout
-                                                labelSpanXL="4"
-                                                labelSpanL="3"
-                                                labelSpanM="4"
-                                                labelSpanS="12"
-                                                adjustLabelSpan="false"
-                                                emptySpanXL="0"
-                                                emptySpanL="4"
-                                                emptySpanM="0"
-                                                emptySpanS="0"
-                                                columnsXL="2"
-                                                columnsL="1"
-                                                columnsM="1"
-                                                singleContainerFullSize="false"
-                                            />
-                                        </f:layout>
-                                        <f:formContainers>
-                                           <f:FormContainer>
-                                                <f:FormElement>
-                                                    <f:fields>
-                                                        <VBox
-                                                            items="{MainModel>/ClaimReports}"
-                                                        >
-                                                            <CustomListItem>
-                                                                <HBox
-                                                                    class="item"
-                                                                >
-                                                                    <VBox>
-                                                                        <Label
-                                                                            text="Claim ID:"
-                                                                            class="detaillabel"
-                                                                        />
-                                                                        <Label
-                                                                            text="Person Number:"
-                                                                            class="detaillabel"
-                                                                        />
-                                                                        <Label
-                                                                            text="Claim Type:"
-                                                                            class="detaillabel"
-                                                                        />
-                                                                        <Label
-                                                                            text="Treatment For:"
-                                                                            class="detaillabel"
-                                                                        />
-                                                                        <Label
-                                                                            text="Treatment For (If Others):"
-                                                                            class="detaillabel"
-                                                                        />
-                                                                        <Label
-                                                                            text="Select Dependents:"
-                                                                            class="detaillabel"
-                                                                        />
-                                                                         <Label
-                                                                            text="Requested Amount:"
-                                                                            class="detaillabel"
-                                                                        />
-                                                                        <Label
-                                                                            text="Status:"
-                                                                            class="detaillabel"
-                                                                        />
-                                                                        <Label
-                                                                            text="Approved Amount:"
-                                                                            class="detaillabel"
-                                                                        />
-                                                                    </VBox>
-                                                                    <VBox>
-                                                                        <Text
-                                                                            text="{MainModel>CLAIM_ID}"
-                                                                            class="detailtext"
-                                                                            id="Cid"
-                                                                        />
-                                                                        <Text
-                                                                            text="{MainModel>PERSON_NUMBER}"
-                                                                            class="detailtext"
-                                                                            id="pno"
-                                                                        />
-                                                                        <Text
-                                                                            text="{MainModel>CLAIM_TYPE}"
-                                                                            class="detailtext"
-                                                                            id="ctype"
-                                                                        />
-                                                                        <Text
-                                                                            text="{MainModel>TREATMENT_FOR}"
-                                                                            class="detail"
-                                                                            id="trf"
-                                                                        />
-                                                                         <Text
-                                                                            text="{MainModel>TREATMENT_FOR_IF_OTHERS}"
-                                                                            class="detail"
-                                                                            id="trfo"
-                                                                        />
-                                                                        <Text
-                                                                            text="{MainModel>SELECT_DEPENDENTS}"
-                                                                            class="detailtext"
-                                                                            id="sed"
-                                                                        />
-                                                                        <Text
-                                                                            text="{MainModel>REQUESTED_AMOUNT}"
-                                                                            class="detailtext"
-                                                                            id="ra"
-                                                                        />
-                                                                         <Text
-                                                                            text="{MainModel>STATUS}"
-                                                                            class="detailtext"
-                                                                            id="status1"
-                                                                        />
-                                                                          <Text
-                                                                            text="{MainModel>APPROVED_AMOUNT}"
-                                                                            class="detailtext"
-                                                                            id="AA"
-                                                                        />
-                                                                    </VBox>
-                                                                </HBox>
-                                                            </CustomListItem>
-                                                        </VBox>
-                                                    </f:fields>
-                                                </f:FormElement>
-                                            </f:FormContainer>
-                                        </f:formContainers>
-                                    </f:Form>
-                                </VBox> -->
                 <Table
                     id="reporttable"
                     inset="false"
@@ -1395,13 +1328,15 @@
                         </Column>
                         <Column
                             minScreenWidth="Desktop"
-                            demandPopin="true" width="12em"
+                            demandPopin="true"
+                            width="12em"
                         >
                             <Text text="Claim Type" />
                         </Column>
                         <Column
                             minScreenWidth="Desktop"
-                            demandPopin="true" width="12em"
+                            demandPopin="true"
+                            width="12em"
                         >
                             <Text text="Treatment For" />
                         </Column>
@@ -1428,7 +1363,8 @@
                         </Column>
                         <Column
                             minScreenWidth="Tablet"
-                            demandPopin="true" width="8em"
+                            demandPopin="true"
+                            width="8em"
                         >
                             <Text text="Approved Amount" />
                         </Column>

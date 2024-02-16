@@ -134,6 +134,15 @@
     color: #000;
     font-size: larger;
 }
+.detail1 .sapMBarPH {
+    background-color: #f1e4e4;
+    color: #fff;
+}
+
+.detail1 .sapMBarChild {
+    color: #000;
+    font-size: larger;
+}
 
 .tabbar .sapContrastPlus {
     background-color: #fef7e2;

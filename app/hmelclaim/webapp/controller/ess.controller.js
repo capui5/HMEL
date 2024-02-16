@@ -83,63 +83,6 @@ sap.ui.define([
                 // Handle orientation change here if needed.
             },
 
-            handleNext: function () {
-                var oIconTabBar = this.byId("myIconTabBar");
-                var aItems = oIconTabBar.getItems();
-                var sSelectedKey = oIconTabBar.getSelectedKey();
-
-                var iCurrentIndex = aItems.findIndex(function (oItem) {
-                    return oItem.getKey() === sSelectedKey;
-                });
-
-                // Save data from the current tab to the claimModel
-                this.saveDataToClaimModel();
-
-                // Check if all required fields are filled in the current tab
-                var aMissingFields = this.validateRequiredFields(sSelectedKey);
-
-                if (aMissingFields.length === 0) {
-
-
-                    // Check if the CheckBox "Accept" is checked
-                    if (sSelectedKey === "Create") {
-                        var oCheckBoxAccept = this.byId("Accept");
-                        var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
-
-
-                        if (bIsCheckBoxChecked) {
-                            // Proceed with the next logic
-                            if (iCurrentIndex < aItems.length - 1) {
-                                // Select the next tab
-                                oIconTabBar.setSelectedKey(aItems[iCurrentIndex + 1].getKey());
-
-
-                                // Update button visibility
-                                this.updateButtonVisibility();
-                            }
-                        } else {
-                            // CheckBox is not checked, show an error message
-
-                            MessageBox.error("Please acknowledge and accept the terms and conditions.");
-                        }
-                    } else {
-                        // Proceed with the next logic for other tabs
-                        if (iCurrentIndex < aItems.length - 1) {
-                            // Select the next tab
-                            oIconTabBar.setSelectedKey(aItems[iCurrentIndex + 1].getKey());
-
-                            // Update button visibility
-                            this.updateButtonVisibility();
-                        }
-                    }
-                } else {
-                    // Show an error message with missing required fields
-
-                    var sErrorMessage = "Please fill in all required fields: " + aMissingFields.join(", ");
-                    MessageBox.error(sErrorMessage);
-                }
-            },
-
             // handleNext: function () {
             //     var oIconTabBar = this.byId("myIconTabBar");
             //     var aItems = oIconTabBar.getItems();
@@ -156,51 +99,110 @@ sap.ui.define([
             //     var aMissingFields = this.validateRequiredFields(sSelectedKey);
 
             //     if (aMissingFields.length === 0) {
+
+
             //         // Check if the CheckBox "Accept" is checked
             //         if (sSelectedKey === "Create") {
             //             var oCheckBoxAccept = this.byId("Accept");
             //             var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
 
-            //             if (!bIsCheckBoxChecked) {
+
+            //             if (bIsCheckBoxChecked) {
+            //                 // Proceed with the next logic
+            //                 if (iCurrentIndex < aItems.length - 1) {
+            //                     // Select the next tab
+            //                     oIconTabBar.setSelectedKey(aItems[iCurrentIndex + 1].getKey());
+
+
+            //                     // Update button visibility
+            //                     this.updateButtonVisibility();
+            //                 }
+            //             } else {
             //                 // CheckBox is not checked, show an error message
+
             //                 MessageBox.error("Please acknowledge and accept the terms and conditions.");
-            //                 return;
             //             }
-            //         }
+            //         } else {
+            //             // Proceed with the next logic for other tabs
+            //             if (iCurrentIndex < aItems.length - 1) {
+            //                 // Select the next tab
+            //                 oIconTabBar.setSelectedKey(aItems[iCurrentIndex + 1].getKey());
 
-            //         // Proceed with the next logic
-            //         if (iCurrentIndex < aItems.length - 1) {
-            //             // Select the next tab
-            //             oIconTabBar.setSelectedKey(aItems[iCurrentIndex + 1].getKey());
-
-            //             // Update button visibility
-            //             this.updateButtonVisibility();
+            //                 // Update button visibility
+            //                 this.updateButtonVisibility();
+            //             }
             //         }
             //     } else {
             //         // Show an error message with missing required fields
+
             //         var sErrorMessage = "Please fill in all required fields: " + aMissingFields.join(", ");
             //         MessageBox.error(sErrorMessage);
-            //         return; // Stop further execution
             //     }
-
-            //     // Execute AJAX call only if "claimDetails" is the first tab
-            //     if (sSelectedKey === "claimDetails" && iCurrentIndex === 0) {
-            //         var startDate = this.byId("startDatePicker1").getDateValue().toISOString().split('T')[0];
-            //         var PolicyNumber = this.byId("PolicyNumber").getSelectedItem().getKey();
-            //         $.ajax({
-            //             url: "/odata/v4/my/policydetails(PolicyNumber='" + PolicyNumber + "',startDatePicker1=" + startDate + ")",
-            //             method: "GET",
-            //             success: function (data) {
-            //                 if (data.success) {
-            //                     oIconTabBar.setSelectedKey(aItems[iCurrentIndex + 1].getKey());
-            //                 } else {
-            //                     MessageBox.error(data.value.message);
-            //                     oIconTabBar.setSelectedKey(sSelectedKey);
-            //                 }
-            //             },
-            //         });
-            //     }               
             // },
+
+            handleNext: function () {
+                var oIconTabBar = this.byId("myIconTabBar");
+                var aItems = oIconTabBar.getItems();
+                var sSelectedKey = oIconTabBar.getSelectedKey();
+
+                var iCurrentIndex = aItems.findIndex(function (oItem) {
+                    return oItem.getKey() === sSelectedKey;
+                });
+
+                // Save data from the current tab to the claimModel
+                this.saveDataToClaimModel();
+
+                // Check if all required fields are filled in the current tab
+                var aMissingFields = this.validateRequiredFields(sSelectedKey);
+
+                if (aMissingFields.length === 0) {
+                    // Check if the CheckBox "Accept" is checked
+                    if (sSelectedKey === "Create") {
+                        var oCheckBoxAccept = this.byId("Accept");
+                        var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
+
+                        if (!bIsCheckBoxChecked) {
+                            // CheckBox is not checked, show an error message
+                            MessageBox.error("Please acknowledge and accept the terms and conditions.");
+                            return;
+                        }
+                    }
+
+                    // Proceed with the next logic
+                    if (iCurrentIndex < aItems.length - 1) {
+                        // Select the next tab
+                        oIconTabBar.setSelectedKey(aItems[iCurrentIndex + 1].getKey());
+
+                        // Update button visibility
+                        this.updateButtonVisibility();
+                    }
+                } else {
+                    // Show an error message with missing required fields
+                    var sErrorMessage = "Please fill in all required fields: " + aMissingFields.join(", ");
+                    MessageBox.error(sErrorMessage);
+                    return; // Stop further execution
+                }
+
+                // Execute AJAX call only if "claimDetails" is the first tab
+                if (sSelectedKey === "claimDetails" && iCurrentIndex === 0) {
+                    var startDate = this.byId("startDatePicker1").getDateValue().toISOString().split('T')[0];
+                    var PolicyNumber = this.byId("PolicyNumber").getSelectedItem().getKey();
+                    $.ajax({
+                        url: "/odata/v4/my/policyValidations(policyNumber='" + PolicyNumber + "',startDate=" + startDate + ")",
+                        method: "GET",
+                        success: function (data) {
+                            if (data.value.success) {
+                                oIconTabBar.setSelectedKey(aItems[iCurrentIndex + 1].getKey());
+                            } else {
+                                MessageBox.error(data.value.message);
+                                oIconTabBar.setSelectedKey(sSelectedKey);
+                            }
+                        }                        
+                        
+                    });
+                }
+                
+            },
 
 
             validateRequiredFields: function (sSelectedKey) {
@@ -909,7 +911,7 @@ sap.ui.define([
                     var billAmount = parseFloat(detail.billAmount);
                     var discount = parseFloat(detail.discount);
 
-                  
+
                     // Create a new claim object for each detail
                     var newClaim = {
                         CLAIM_ID: claimid,
@@ -926,7 +928,7 @@ sap.ui.define([
                         BILL_DATE: billDate,
                         BILL_NO: billNo,
                         BILL_AMOUNT: billAmount,
-                        DISCOUNT:discount
+                        DISCOUNT: discount
 
                     };
 
@@ -1033,8 +1035,8 @@ sap.ui.define([
                 this.oItemsProcessor = [];
             },
 
-            
-            
-            
+
+
+
         });
     });

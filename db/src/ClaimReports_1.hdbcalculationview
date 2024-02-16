@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="ClaimReports_1" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Aggregation" application="BAS" cacheInvalidationPeriod="NONE" enforceSqlExecution="true">
+<descriptions defaultDescription="ClaimReports_1.hdbcalculationview"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="MYSERVICE_CLAIM_DETAILS">
+    <resourceUri>MYSERVICE_CLAIM_DETAILS</resourceUri>
+  </DataSource>
+</dataSources>
+<snapshotProcedures/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="Projection_1">
+    <viewAttributes>
+      <viewAttribute id="ID"/>
+      <viewAttribute id="CLAIM_ID"/>
+      <viewAttribute id="PERSON_NUMBER"/>
+      <viewAttribute id="CLAIM_TYPE"/>
+      <viewAttribute id="TREATMENT_FOR"/>
+      <viewAttribute id="TREATMENT_FOR_IF_OTHERS"/>
+      <viewAttribute id="SELECT_DEPENDENTS"/>
+      <viewAttribute id="REQUESTED_AMOUNT"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="APPROVED_AMOUNT"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="MYSERVICE_CLAIM_DETAILS"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="Projection_1">
+  <attributes>
+    <attribute id="ID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ID"/>
+      <keyMapping columnObjectName="Projection_1" columnName="ID"/>
+    </attribute>
+    <attribute id="PERSON_NUMBER" order="3">
+      <descriptions defaultDescription="PERSON_NUMBER"/>
+      <keyMapping columnObjectName="Projection_1" columnName="PERSON_NUMBER"/>
+    </attribute>
+    <attribute id="CLAIM_TYPE" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CLAIM_TYPE"/>
+      <keyMapping columnObjectName="Projection_1" columnName="CLAIM_TYPE"/>
+    </attribute>
+    <attribute id="TREATMENT_FOR" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TREATMENT_FOR"/>
+      <keyMapping columnObjectName="Projection_1" columnName="TREATMENT_FOR"/>
+    </attribute>
+    <attribute id="TREATMENT_FOR_IF_OTHERS" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TREATMENT_FOR_IF_OTHERS"/>
+      <keyMapping columnObjectName="Projection_1" columnName="TREATMENT_FOR_IF_OTHERS"/>
+    </attribute>
+    <attribute id="SELECT_DEPENDENTS" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SELECT_DEPENDENTS"/>
+      <keyMapping columnObjectName="Projection_1" columnName="SELECT_DEPENDENTS"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="STATUS" order="9" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="13">
+        <formula>'SUBMITTED'</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+    <calculatedAttribute id="APPROVED_AMOUNT" order="10" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="INTEGER" expressionLanguage="SQL">
+        <formula>null</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures>
+    <measure id="CLAIM_ID" order="2" aggregationType="sum" measureType="simple">
+      <descriptions defaultDescription="CLAIM_ID"/>
+      <measureMapping columnObjectName="Projection_1" columnName="CLAIM_ID"/>
+      <exceptionAggregationMetadata/>
+    </measure>
+    <measure id="REQUESTED_AMOUNT" order="8" aggregationType="sum" measureType="simple">
+      <descriptions defaultDescription="REQUESTED_AMOUNT"/>
+      <measureMapping columnObjectName="Projection_1" columnName="REQUESTED_AMOUNT"/>
+      <exceptionAggregationMetadata/>
+    </measure>
+  </baseMeasures>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+  <localDimensions/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="Projection_1" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="100" y="218"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>
