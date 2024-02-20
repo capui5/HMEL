@@ -90,11 +90,11 @@ service MyService {
             CONSULTANCY_CATEGORY    : String(40);
             MEDICAL_STORE           : String(40);
             BILL_DATE               : Timestamp;
-            BILL_NO                 : Integer;
+            BILL_NO                 : String;
             BILL_AMOUNT             : Integer;
             DISCOUNT                : Integer;
-            STATUS                  : String;
-            APPROVED_AMOUNT         : Integer;
+            // STATUS                  : String;
+            APPROVED_AMOUNT         : Decimal(15,8);
 
     }
 
@@ -107,7 +107,7 @@ service MyService {
             CHECK_NO        : String(20);
             BATCH_NO        : String(20);
             BANK_NAME       : String(20);
-            STATUS          : String(1);
+            STATUS          : String(40);
     }
 
     entity POLICY_DETAILS {
@@ -124,6 +124,6 @@ service MyService {
 
     // function validations() returns String;
     function validations(endDate : Date, startDate : Date, requestedAmount : Integer, category : String) returns Integer;
-    function policyValidations(policyNumber : String, startDate: Date)                               returns String;
+    function policyValidations(policyNumber : String, startDate: Date,illnessName:String)                               returns String;
 
 }

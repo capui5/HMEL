@@ -187,8 +187,9 @@ sap.ui.define([
                 if (sSelectedKey === "claimDetails" && iCurrentIndex === 0) {
                     var startDate = this.byId("startDatePicker1").getDateValue().toISOString().split('T')[0];
                     var PolicyNumber = this.byId("PolicyNumber").getSelectedItem().getKey();
+                    var illnessName = this.byId("TF").getSelectedKey();
                     $.ajax({
-                        url: "/odata/v4/my/policyValidations(policyNumber='" + PolicyNumber + "',startDate=" + startDate + ")",
+                        url: "/odata/v4/my/policyValidations(policyNumber='" + PolicyNumber + "',startDate=" + startDate + ",illnessName='" + illnessName + "')",
                         method: "GET",
                         success: function (data) {
                             if (data.value.success) {
@@ -197,11 +198,11 @@ sap.ui.define([
                                 MessageBox.error(data.value.message);
                                 oIconTabBar.setSelectedKey(sSelectedKey);
                             }
-                        }                        
-                        
+                        }
+
                     });
                 }
-                
+
             },
 
 
@@ -895,7 +896,7 @@ sap.ui.define([
                 allDetails.forEach(function (detail) {
                     // Construct claim object for each detail
                     var claimid = parseInt(new Date().getTime() / 1000);
-                    var person = 989898;
+                    var person = 90000;
                     var claimType = that.byId("claimt").getText();
                     var claimStartDate = new Date(that.byId("claimsd").getText()).toISOString();
                     var claimEndDate = new Date(that.byId("claimed").getText()).toISOString();
@@ -907,7 +908,7 @@ sap.ui.define([
                     var consultancyCategory = detail.category;
                     var hospitalStore = detail.hospitalStore;
                     var billDate = detail.billDate.toISOString();
-                    var billNo = parseInt(detail.billNo);
+                    var billNo = detail.billNo;
                     var billAmount = parseFloat(detail.billAmount);
                     var discount = parseFloat(detail.discount);
 
@@ -958,7 +959,6 @@ sap.ui.define([
                         });
                 });
             },
-
             //UPLOAD START FROM HERE//
 
             onBeforeInitiatingItemUpload: function (oEvent) {
@@ -1035,8 +1035,182 @@ sap.ui.define([
                 this.oItemsProcessor = [];
             },
 
+            // onCustomerPress: function (oEvent) {
+            //     var oButton = oEvent.getSource();
+            //     var sClaimId = oButton.getBindingContext("MainModel").getProperty("CLAIM_ID");
+
+            //     this.onOpenDialog(sClaimId);
+            // },
+            onCustomerPress: function (oEvent) {
+                var oButton = oEvent.getSource();
+                var sClaimId = oButton.getBindingContext("MainModel").getProperty("CLAIM_ID");
+
+                // Store sClaimId as a property of the controller
+                this._sClaimId = sClaimId;
+
+                this.onOpenDialog(sClaimId);
+            },
 
 
+            onOpenDialog: function (sClaimId) {
 
+                var oView = this.getView();
+                var oDialog = oView.byId("manage");
+
+                // Retrieve sClaimId from the controller's property
+                var sClaimId = this._sClaimId;
+
+                console.log("Claim ID:", sClaimId);
+
+
+                if (!oDialog) {
+                    // Load the fragment if not already loaded
+                    oDialog = sap.ui.xmlfragment(oView.getId(), "hmel.claims.hmelclaim.fragments.manage", this);
+                    oView.addDependent(oDialog);
+                }
+
+                // Set the title with claim ID
+                oDialog.setTitle("Claim ID: " + sClaimId);
+
+                oDialog.open();
+            },
+
+
+            onCloseFrag: function () {
+                var oView = this.getView();
+                var oDialog = oView.byId("manage");
+                oDialog.close();
+            },
+
+            // onSaveFrag: function () {
+            //     var oView = this.getView();
+            //     var oDialog = oView.byId("manage");
+            //     var sClaimId = this._sClaimId;
+
+            //     // Get the settlement date value as a timestamp (in milliseconds)
+            //     var dSettlementDate = new Date();
+            //     var nSettlementTimestamp = dSettlementDate.getTime();
+
+            //     // Convert timestamp to ISO string format
+            //     var sSettlementDateISO = new Date(nSettlementTimestamp).toISOString();
+
+            //     // Get all input values
+            //     var sBatchNo = oView.byId("batchno").getValue();
+            //     var sDocumentStatus = oView.byId("documentstatus").getValue();
+            //     var sNIA = oView.byId("nia").getValue();
+            //     var sBankName = oView.byId("bankname").getValue();
+            //     var sChequeNo = oView.byId("chequeno").getValue();
+            //     var sHLRemarks = oView.byId("hlremarks").getValue();
+
+            //     // Prepare payload
+            //     var oPayload = {
+            //         REFNR: sClaimId.toString(),
+            //         SETTLEMENT_DATE: sSettlementDateISO, // Use the ISO string format
+            //         HR_REMARKS: sHLRemarks,
+            //         NIA_DATE: new Date(sNIA).toISOString(), // Convert NIA date string to ISO 8601 format
+            //         CHECK_NO: sChequeNo,
+            //         BATCH_NO: sBatchNo,
+            //         BANK_NAME: sBankName,
+            //         STATUS: sDocumentStatus
+            //     };
+
+            //     // Send payload to backend to save using AJAX
+            //     $.ajax({
+            //         url: "/odata/v4/my/ZHRMEDICLAIM",
+            //         type: "POST",
+            //         contentType: "application/json",
+            //         data: JSON.stringify(oPayload),
+            //         success: function () {
+            //             // Success handling
+            //             sap.m.MessageBox.success("Data saved successfully");
+            //             oDialog.close();
+            //         },
+            //         error: function () {
+            //             // Error handling
+            //             sap.m.MessageBox.error("Failed to save data");
+            //         }
+            //     });
+            // }
+
+            onSaveFrag: function () {
+                var oView = this.getView();
+                var oDialog = oView.byId("manage");
+                var sClaimId = this._sClaimId;
+            
+                // Get the settlement date value as a timestamp (in milliseconds)
+                var dSettlementDate = new Date();
+                var nSettlementTimestamp = dSettlementDate.getTime();
+            
+                // Convert timestamp to ISO string format
+                var sSettlementDateISO = new Date(nSettlementTimestamp).toISOString();
+            
+                // Get the NIA date as a timestamp (in milliseconds)
+                var dnia = new Date();
+                var nNia = dnia.getTime();
+            
+                // Convert NIA timestamp to ISO string format
+                var sNiaISO = new Date(nNia).toISOString();
+            
+                // Get all input values
+                var sBatchNo = oView.byId("batchno").getValue();
+                var sDocumentStatus = oView.byId("documentstatus").getValue();
+                var sBankName = oView.byId("bankname").getValue();
+                var sChequeNo = oView.byId("chequeno").getValue();
+                var sHLRemarks = oView.byId("hlremarks").getValue();
+            
+                // Prepare payload for ZHRMEDICLAIM
+                var oPayloadZHRMEDICLAIM = {
+                    REFNR: sClaimId.toString(),
+                    SETTLEMENT_DATE: sSettlementDateISO,
+                    HR_REMARKS: sHLRemarks,
+                    NIA_DATE: sNiaISO,
+                    CHECK_NO: sChequeNo,
+                    BATCH_NO: sBatchNo,
+                    BANK_NAME: sBankName,
+                    STATUS: sDocumentStatus
+                };
+            
+                // Send payload to ZHRMEDICLAIM endpoint
+                $.ajax({
+                    url: "/odata/v4/my/ZHRMEDICLAIM",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(oPayloadZHRMEDICLAIM),
+                    success: function () {
+                        // Success handling for ZHRMEDICLAIM
+                        sap.m.MessageBox.success("Data saved successfully in ZHRMEDICLAIM");
+            
+                        // Prepare payload for updating claimreports
+                        var oPayloadClaimReports = {
+                            CLAIM_ID: sClaimId,
+                            STATUS: sDocumentStatus
+                        };
+            
+                        // Send payload to update claimreports
+                        $.ajax({
+                            url: "/odata/v4/my/ClaimReports",
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(oPayloadClaimReports),
+                            success: function () {
+                                // Success handling for updating claimreports
+                                sap.m.MessageBox.success("Status updated successfully in claimreports");
+                                oDialog.close();
+                            },
+                            error: function () {
+                                // Error handling for updating claimreports
+                                sap.m.MessageBox.error("Failed to update status in claimreports");
+                            }
+                        });
+            
+                    },
+                    error: function () {
+                        // Error handling for ZHRMEDICLAIM
+                        sap.m.MessageBox.error("Failed to save data in ZHRMEDICLAIM");
+                    }
+                });
+            }
+            
+            
         });
     });

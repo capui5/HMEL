@@ -494,7 +494,6 @@
                                                                 />
                                                                 <Input
                                                                     id="billno"
-                                                                    liveChange="validateOnlyNumbers"
                                                                     width="330px"
                                                                 />
                                                             </VBox>
@@ -1246,7 +1245,6 @@
                 <Table
                     id="managetable"
                     inset="false"
-                    mode="SingleSelect"
                     alternateRowColors="true"
                     items="{MainModel>/ClaimReports}"
                 >
@@ -1287,6 +1285,10 @@
                         >
                             <Text text="Requested Amount" />
                         </Column>
+                        <Column
+                            hAlign="Center"
+                            demandPopin="true"
+                        />
                     </columns>
                     <items>
                         <ColumnListItem vAlign="Middle">
@@ -1297,11 +1299,16 @@
                                 <Text text="{MainModel>TREATMENT_FOR}" />
                                 <Text text="{MainModel>SELECT_DEPENDENTS}" />
                                 <Text text="{MainModel>REQUESTED_AMOUNT}" />
+                                <Button
+                                    icon="sap-icon://arrow-right"
+                                    press="onCustomerPress"
+                                />
                             </cells>
                         </ColumnListItem>
                     </items>
                 </Table>
             </Page>
+
             <Page
                 id="detail2"
                 title="Claim Reports"
@@ -1382,6 +1389,7 @@
                                 <Text text="{MainModel>SELECT_DEPENDENTS}" />
                                 <Text text="{MainModel>REQUESTED_AMOUNT}" />
                                 <Text text="{MainModel>STATUS}" />
+                                  <!-- <Text text="{MainModel>ZHRMEDICLAIM/STATUS}" /> -->
                                 <Text text="{MainModel>APPROVED_AMOUNT}" />
                             </cells>
                         </ColumnListItem>
