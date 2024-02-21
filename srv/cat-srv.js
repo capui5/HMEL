@@ -112,24 +112,32 @@ module.exports = cds.service.impl(srv => {
     // });
     
     srv.on('policyValidations', async (req) => {
-        const { policyNumber, startDate } = req.data;
+        console.log(req.data)
+        const { policyNumber, startDate,illnessName } = req.data;
+
 
            // Function to fetch policy start date from the database
     async function fetchPolicyStartDate(policyNumber) {
         const policyData = await cds.run(
             SELECT.one
                 .from('MYSERVICE_POLICY_DETAILS')
-                .where({ POLICYNO: policyNumber })
+                .where({ POLICYNO: policyNumber})
+                
         );
-        return new Date(policyData.POLICY_STARTDATE);
+        console.log(policyData)
+        // return new Date(policyData.POLICY_STARTDATE); 
+        return policyData
     }
     
         try {
             // Fetch the policy start date from the database
-            const policyStartDate = await fetchPolicyStartDate(policyNumber);
+            const policyData = await fetchPolicyStartDate(policyNumber);
+
+            if(policyData.ILLNESS_NAME===illnessName && policyData.PRE_ILLNESS===1){
     
             // Calculate difference in months between policy start date and provided start date
-            const diffInMonths = calculateMonthDifference(policyStartDate, new Date(startDate));
+            
+            const diffInMonths = calculateMonthDifference(new Date(policyData.POLICY_STARTDATE), new Date(startDate));
     
             // Check if the difference is greater than or equal to 2 months
             if (diffInMonths >= 2) {
@@ -137,8 +145,13 @@ module.exports = cds.service.impl(srv => {
                 return { success: true };
             } else {
                 // Return error response if the difference is less than 2 months
-                return { success: false, message: 'Claim is not eligible.' };
+                return { success: false, message: 'you have a cooling-off period of 2 months\n from the date of policy issuance' };
             }
+        
+        }
+        else{
+            return{success:true}
+        }
         } catch (error) {
             // Log error
             console.error('Error occurred during policy validation:', error);
@@ -146,9 +159,6 @@ module.exports = cds.service.impl(srv => {
             return { success: false, message: 'An error occurred during policy validation. Please try again later.' };
         }
     });
-    
- 
-    
     // Function to calculate difference in months between two dates
     function calculateMonthDifference(date1, date2) {
         return (date2.getFullYear() - date1.getFullYear()) * 12 + (date2.getMonth() - date1.getMonth());

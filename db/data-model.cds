@@ -147,7 +147,16 @@ entity ClaimReports {
     TREATMENT_FOR           : String(40);
     TREATMENT_FOR_IF_OTHERS : String(40);
     SELECT_DEPENDENTS       : String(40);
-    REQUESTED_AMOUNT        : Integer;
     STATUS                  : String;
+    REQUESTED_AMOUNT        : Integer;
     APPROVED_AMOUNT         : Integer;
+}
+@cds.persistence.exists
+entity Managecalims {
+    CLAIM_ID                : Integer;
+    PERSON_NUMBER           : Integer;
+    CLAIM_TYPE              : String(40);
+    TREATMENT_FOR           : String(40);
+    SELECT_DEPENDENTS       : String(40);
+    REQUESTED_AMOUNT        : Integer;
 }

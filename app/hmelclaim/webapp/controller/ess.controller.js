@@ -1081,86 +1081,29 @@ sap.ui.define([
                 var oDialog = oView.byId("manage");
                 oDialog.close();
             },
-
-            // onSaveFrag: function () {
-            //     var oView = this.getView();
-            //     var oDialog = oView.byId("manage");
-            //     var sClaimId = this._sClaimId;
-
-            //     // Get the settlement date value as a timestamp (in milliseconds)
-            //     var dSettlementDate = new Date();
-            //     var nSettlementTimestamp = dSettlementDate.getTime();
-
-            //     // Convert timestamp to ISO string format
-            //     var sSettlementDateISO = new Date(nSettlementTimestamp).toISOString();
-
-            //     // Get all input values
-            //     var sBatchNo = oView.byId("batchno").getValue();
-            //     var sDocumentStatus = oView.byId("documentstatus").getValue();
-            //     var sNIA = oView.byId("nia").getValue();
-            //     var sBankName = oView.byId("bankname").getValue();
-            //     var sChequeNo = oView.byId("chequeno").getValue();
-            //     var sHLRemarks = oView.byId("hlremarks").getValue();
-
-            //     // Prepare payload
-            //     var oPayload = {
-            //         REFNR: sClaimId.toString(),
-            //         SETTLEMENT_DATE: sSettlementDateISO, // Use the ISO string format
-            //         HR_REMARKS: sHLRemarks,
-            //         NIA_DATE: new Date(sNIA).toISOString(), // Convert NIA date string to ISO 8601 format
-            //         CHECK_NO: sChequeNo,
-            //         BATCH_NO: sBatchNo,
-            //         BANK_NAME: sBankName,
-            //         STATUS: sDocumentStatus
-            //     };
-
-            //     // Send payload to backend to save using AJAX
-            //     $.ajax({
-            //         url: "/odata/v4/my/ZHRMEDICLAIM",
-            //         type: "POST",
-            //         contentType: "application/json",
-            //         data: JSON.stringify(oPayload),
-            //         success: function () {
-            //             // Success handling
-            //             sap.m.MessageBox.success("Data saved successfully");
-            //             oDialog.close();
-            //         },
-            //         error: function () {
-            //             // Error handling
-            //             sap.m.MessageBox.error("Failed to save data");
-            //         }
-            //     });
-            // }
-
             onSaveFrag: function () {
-                var oView = this.getView();
-                var oDialog = oView.byId("manage");
-                var sClaimId = this._sClaimId;
+                const oView = this.getView();
+                const oDialog = oView.byId("manage");
+                const sClaimId = this._sClaimId;
+                
+                // Get all input values
+                const sBatchNo = oView.byId("batchno").getValue();
+                const sDocumentStatus = oView.byId("documentstatus").getValue();
+                const sBankName = oView.byId("bankname").getValue();
+                const sChequeNo = oView.byId("chequeno").getValue();
+                const sHLRemarks = oView.byId("hlremarks").getValue();
             
                 // Get the settlement date value as a timestamp (in milliseconds)
-                var dSettlementDate = new Date();
-                var nSettlementTimestamp = dSettlementDate.getTime();
-            
-                // Convert timestamp to ISO string format
-                var sSettlementDateISO = new Date(nSettlementTimestamp).toISOString();
+                const nSettlementTimestamp = Date.now();
+                const sSettlementDateISO = new Date(nSettlementTimestamp).toISOString();
             
                 // Get the NIA date as a timestamp (in milliseconds)
-                var dnia = new Date();
-                var nNia = dnia.getTime();
-            
-                // Convert NIA timestamp to ISO string format
-                var sNiaISO = new Date(nNia).toISOString();
-            
-                // Get all input values
-                var sBatchNo = oView.byId("batchno").getValue();
-                var sDocumentStatus = oView.byId("documentstatus").getValue();
-                var sBankName = oView.byId("bankname").getValue();
-                var sChequeNo = oView.byId("chequeno").getValue();
-                var sHLRemarks = oView.byId("hlremarks").getValue();
+                const nNia = Date.now();
+                const sNiaISO = new Date(nNia).toISOString();
             
                 // Prepare payload for ZHRMEDICLAIM
-                var oPayloadZHRMEDICLAIM = {
-                    REFNR: sClaimId.toString(),
+                const oPayloadZHRMEDICLAIM = {
+                    REFNR: sClaimId,
                     SETTLEMENT_DATE: sSettlementDateISO,
                     HR_REMARKS: sHLRemarks,
                     NIA_DATE: sNiaISO,
@@ -1170,44 +1113,45 @@ sap.ui.define([
                     STATUS: sDocumentStatus
                 };
             
-                // Send payload to ZHRMEDICLAIM endpoint
-                $.ajax({
-                    url: "/odata/v4/my/ZHRMEDICLAIM",
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(oPayloadZHRMEDICLAIM),
-                    success: function () {
-                        // Success handling for ZHRMEDICLAIM
-                        sap.m.MessageBox.success("Data saved successfully in ZHRMEDICLAIM");
+                // Save data in ZHRMEDICLAIM
+                this.saveDataToZHRMEDICLAIM(oPayloadZHRMEDICLAIM)
+                    .then(() => {
+                        // Clear form fields
+                        oView.byId("batchno").setValue("");
+                        oView.byId("documentstatus").setValue("");
+                        oView.byId("bankname").setValue("");
+                        oView.byId("chequeno").setValue("");
+                        oView.byId("hlremarks").setValue("");
             
-                        // Prepare payload for updating claimreports
-                        var oPayloadClaimReports = {
-                            CLAIM_ID: sClaimId,
-                            STATUS: sDocumentStatus
-                        };
+                        // Close dialog
+                        oDialog.close();
+
+                        location.reload();
             
-                        // Send payload to update claimreports
-                        $.ajax({
-                            url: "/odata/v4/my/ClaimReports",
-                            type: "POST",
-                            contentType: "application/json",
-                            data: JSON.stringify(oPayloadClaimReports),
-                            success: function () {
-                                // Success handling for updating claimreports
-                                sap.m.MessageBox.success("Status updated successfully in claimreports");
-                                oDialog.close();
-                            },
-                            error: function () {
-                                // Error handling for updating claimreports
-                                sap.m.MessageBox.error("Failed to update status in claimreports");
-                            }
-                        });
+                        // Navigate back to claim reports
+                        this.getOwnerComponent().getRouter().navTo("detail2"); // Replace "claimReports" with the actual route name
+                    })
+                    .catch(() => {
+                        // Handle error if needed
+                    });
+            },
             
-                    },
-                    error: function () {
-                        // Error handling for ZHRMEDICLAIM
-                        sap.m.MessageBox.error("Failed to save data in ZHRMEDICLAIM");
-                    }
+            saveDataToZHRMEDICLAIM: function (oPayloadZHRMEDICLAIM) {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: "/odata/v4/my/ZHRMEDICLAIM",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(oPayloadZHRMEDICLAIM),
+                        success: function () {
+                            sap.m.MessageBox.success("Data saved successfully in ZHRMEDICLAIM");
+                            resolve();
+                        },
+                        error: function () {
+                            sap.m.MessageBox.error("Failed to save data in ZHRMEDICLAIM");
+                            reject();
+                        }
+                    });
                 });
             }
             

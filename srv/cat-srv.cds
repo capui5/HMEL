@@ -6,6 +6,7 @@ service MyService {
     entity HC_PA0167 as projection on hm.HC_PA0167;
     entity HC_PA0171 as projection on hm.HC_PA0171;
     entity ClaimReports as projection on hm.ClaimReports;
+    entity ManageClaims as projection on hm.Managecalims;
         
     
 
@@ -100,7 +101,7 @@ service MyService {
 
     entity ZHRMEDICLAIM {
         
-            REFNR           : String(13);
+            REFNR           : Integer;
             SETTLEMENT_DATE : Timestamp;
             HR_REMARKS      : String(40);
             NIA_DATE        : Timestamp;

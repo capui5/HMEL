@@ -12,11 +12,13 @@
                 id="hellosave"
                 text="Save"
                 press=".onSaveFrag"
+                class ="add"
             />
             <Button
                 id="helloDialog"
                 text="Cancel"
                 press=".onCloseFrag"
+                 class ="add"
             />
         </buttons>
         <f:Form

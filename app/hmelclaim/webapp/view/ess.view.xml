@@ -1246,7 +1246,7 @@
                     id="managetable"
                     inset="false"
                     alternateRowColors="true"
-                    items="{MainModel>/ClaimReports}"
+                    items="{MainModel>/ManageClaims}"
                 >
                     <columns>
                         <Column>
@@ -1303,6 +1303,10 @@
                                     icon="sap-icon://arrow-right"
                                     press="onCustomerPress"
                                 />
+                                  <!-- <Button
+                                    icon="sap-icon://approvals"
+                                    press="onCustomerPress"
+                                /> -->
                             </cells>
                         </ColumnListItem>
                     </items>
@@ -1366,7 +1370,7 @@
                             <Text text="Requested Amount" />
                         </Column>
                         <Column demandPopin="true">
-                            <Text text="Status" />
+                            <Text text="STATUS" />
                         </Column>
                         <Column
                             minScreenWidth="Tablet"
