@@ -3,12 +3,11 @@ using {hmel_project as hm} from '../db/data-model';
 
 service MyService {
 
-    entity HC_PA0167 as projection on hm.HC_PA0167;
-    entity HC_PA0171 as projection on hm.HC_PA0171;
+    entity HC_PA0167    as projection on hm.HC_PA0167;
+    entity HC_PA0171    as projection on hm.HC_PA0171;
     entity ClaimReports as projection on hm.ClaimReports;
     entity ManageClaims as projection on hm.Managecalims;
-        
-    
+
 
     entity ZHRMED_POLICY {
         MANDT     : String(3);
@@ -95,13 +94,13 @@ service MyService {
             BILL_AMOUNT             : Integer;
             DISCOUNT                : Integer;
             // STATUS                  : String;
-            APPROVED_AMOUNT         : Decimal(15,8);
+            APPROVED_AMOUNT         : Decimal(15, 8);
 
     }
 
     entity ZHRMEDICLAIM {
-        
-            REFNR           : Integer;
+
+        key REFNR           : Integer;
             SETTLEMENT_DATE : Timestamp;
             HR_REMARKS      : String(40);
             NIA_DATE        : Timestamp;
@@ -125,6 +124,7 @@ service MyService {
 
     // function validations() returns String;
     function validations(endDate : Date, startDate : Date, requestedAmount : Integer, category : String) returns Integer;
-    function policyValidations(policyNumber : String, startDate: Date,illnessName:String)                               returns String;
+    function policyValidations(policyNumber : String, startDate : Date, illnessName : String)            returns String;
+       function statusUpdate(REFNR : Integer, Status : String,)            returns Integer;
 
 }

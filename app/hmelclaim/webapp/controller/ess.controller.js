@@ -1074,87 +1074,150 @@ sap.ui.define([
 
                 oDialog.open();
             },
-
-
             onCloseFrag: function () {
                 var oView = this.getView();
                 var oDialog = oView.byId("manage");
+
+                // Clearing input fields
+                oView.byId("batchno").setValue("");
+                oView.byId("documentstatus").setSelectedKey("");
+                oView.byId("nia").setValue("");
+                oView.byId("settlementdate").setValue("");
+                oView.byId("bankname").setValue("");
+                oView.byId("chequeno").setValue("");
+                oView.byId("hlremarks").setValue("");
+
                 oDialog.close();
             },
-            onSaveFrag: function () {
-                const oView = this.getView();
-                const oDialog = oView.byId("manage");
-                const sClaimId = this._sClaimId;
-                
-                // Get all input values
-                const sBatchNo = oView.byId("batchno").getValue();
-                const sDocumentStatus = oView.byId("documentstatus").getValue();
-                const sBankName = oView.byId("bankname").getValue();
-                const sChequeNo = oView.byId("chequeno").getValue();
-                const sHLRemarks = oView.byId("hlremarks").getValue();
-            
-                // Get the settlement date value as a timestamp (in milliseconds)
-                const nSettlementTimestamp = Date.now();
-                const sSettlementDateISO = new Date(nSettlementTimestamp).toISOString();
-            
-                // Get the NIA date as a timestamp (in milliseconds)
-                const nNia = Date.now();
-                const sNiaISO = new Date(nNia).toISOString();
-            
-                // Prepare payload for ZHRMEDICLAIM
-                const oPayloadZHRMEDICLAIM = {
-                    REFNR: sClaimId,
-                    SETTLEMENT_DATE: sSettlementDateISO,
-                    HR_REMARKS: sHLRemarks,
-                    NIA_DATE: sNiaISO,
-                    CHECK_NO: sChequeNo,
-                    BATCH_NO: sBatchNo,
-                    BANK_NAME: sBankName,
-                    STATUS: sDocumentStatus
-                };
-            
-                // Save data in ZHRMEDICLAIM
-                this.saveDataToZHRMEDICLAIM(oPayloadZHRMEDICLAIM)
-                    .then(() => {
-                        // Clear form fields
-                        oView.byId("batchno").setValue("");
-                        oView.byId("documentstatus").setValue("");
-                        oView.byId("bankname").setValue("");
-                        oView.byId("chequeno").setValue("");
-                        oView.byId("hlremarks").setValue("");
-            
-                        // Close dialog
-                        oDialog.close();
 
-                        location.reload();
+            onSaveFrag: function() {
+                var oView = this.getView();
+                var oDialog = oView.byId("manage");
+                var sClaimId = this._sClaimId;
             
-                        // Navigate back to claim reports
-                        this.getOwnerComponent().getRouter().navTo("detail2"); // Replace "claimReports" with the actual route name
-                    })
-                    .catch(() => {
-                        // Handle error if needed
-                    });
-            },
+                // Check if sClaimId is not null or undefined
+                if (sClaimId) {
+                    // Parse sClaimId as an integer
+                    var iClaimId = parseInt(sClaimId);
             
-            saveDataToZHRMEDICLAIM: function (oPayloadZHRMEDICLAIM) {
-                return new Promise((resolve, reject) => {
-                    $.ajax({
-                        url: "/odata/v4/my/ZHRMEDICLAIM",
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify(oPayloadZHRMEDICLAIM),
-                        success: function () {
-                            sap.m.MessageBox.success("Data saved successfully in ZHRMEDICLAIM");
-                            resolve();
-                        },
-                        error: function () {
-                            sap.m.MessageBox.error("Failed to save data in ZHRMEDICLAIM");
-                            reject();
-                        }
-                    });
-                });
+                    // Get all input values
+                    var sBatchNo = oView.byId("batchno").getValue();
+                    var sDocumentStatus = oView.byId("documentstatus").getValue();
+                    var sBankName = oView.byId("bankname").getValue();
+                    var sChequeNo = oView.byId("chequeno").getValue();
+                    var sHLRemarks = oView.byId("hlremarks").getValue();
+            
+                    // Get the settlement date value as a timestamp (in milliseconds)
+                    var nSettlementTimestamp = Date.now();
+                    var sSettlementDateISO = new Date(nSettlementTimestamp).toISOString();
+            
+                    // Get the NIA date as a timestamp (in milliseconds)
+                    var nNia = Date.now();
+                    var sNiaISO = new Date(nNia).toISOString();
+            
+                    var oPayloadZHRMEDICLAIM = {
+                        REFNR: iClaimId, // Use the parsed integer value
+                        SETTLEMENT_DATE: sSettlementDateISO,
+                        HR_REMARKS: sHLRemarks,
+                        NIA_DATE: sNiaISO,
+                        CHECK_NO: sChequeNo,
+                        BATCH_NO: sBatchNo,
+                        BANK_NAME: sBankName,
+                        STATUS: sDocumentStatus
+                    };
+            
+                    // Check if the REFNR exists using fetch
+                    fetch("/odata/v4/my/statusUpdate(REFNR=" + iClaimId + ",Status='" + sDocumentStatus + "')")
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(data) {
+                            if (data.value.success) {
+                                // If REFNR exists, update the status
+                                fetch("/odata/v4/my/statusUpdate(REFNR=" + iClaimId + ",Status='" + sDocumentStatus + "')", {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({})
+                                })
+                                .then(function(response) {
+                                    console.log(response);
+                                    sap.m.MessageBox.success("Claim status updated successfully", {
+                                        onClose: function() {
+                                            // Clear forms
+                                            oView.byId("batchno").setValue("");
+                                            oView.byId("documentstatus").setValue("");
+                                            oView.byId("bankname").setValue("");
+                                            oView.byId("chequeno").setValue("");
+                                            oView.byId("hlremarks").setValue("");
+                                            oView.byId("settlementdate").setValue("");
+                                            oView.byId("nia").setValue("");
+                                            
+                                            oDialog.close();
+
+                                            location.reload();
+                                            // Navigate back to detail2
+                                            var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                            oRouter.navTo("detail2");
+                                        }
+                                    });
+                                })
+                                .catch(function(error) {
+                                    console.error('Error occurred during status update:', error);
+                                    sap.m.MessageBox.error("Failed to update claim status");
+                                });
+                            } else {
+                                // If REFNR does not exist, save the data
+                                fetch("/odata/v4/my/ZHRMEDICLAIM", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify(oPayloadZHRMEDICLAIM)
+                                })
+                                .then(function() {
+                                    sap.m.MessageBox.success("Data saved successfully in ZHRMEDICLAIM", {
+                                        onClose: function() {
+                                            // Clear forms
+                                            oView.byId("batchno").setValue("");
+                                            oView.byId("documentstatus").setValue("");
+                                            oView.byId("bankname").setValue("");
+                                            oView.byId("chequeno").setValue("");
+                                            oView.byId("hlremarks").setValue("");
+                                            oView.byId("settlementdate").setValue("");
+                                            oView.byId("nia").setValue("");
+                                            
+                                            oDialog.close();
+
+                                            location.reload();
+                                            // Navigate back to detail2
+                                            var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                            oRouter.navTo("detail2");
+                                        }
+                                    });
+                                })
+                                .catch(function() {
+                                    sap.m.MessageBox.error("Failed to save data in ZHRMEDICLAIM");
+                                });
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('Error occurred while checking REFNR:', error);
+                            sap.m.MessageBox.error("Failed to check REFNR");
+                        });
+                } else {
+                    // Handle the case where sClaimId is null or undefined
+                    console.error('sClaimId is null or undefined');
+                    sap.m.MessageBox.error("Invalid Claim ID");
+                }
             }
             
+            
+            
+            
+
+          
             
         });
     });

@@ -15,7 +15,7 @@
                 class ="add"
             />
             <Button
-                id="helloDialog"
+                id="hellocancel"
                 text="Cancel"
                 press=".onCloseFrag"
                  class ="add"
