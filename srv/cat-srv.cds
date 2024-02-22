@@ -108,6 +108,7 @@ service MyService {
             BATCH_NO        : String(20);
             BANK_NAME       : String(20);
             STATUS          : String(40);
+            APPROVED_AMOUNT : String(40);
     }
 
     entity POLICY_DETAILS {

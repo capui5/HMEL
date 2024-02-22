@@ -53,7 +53,6 @@
                                     <Label
                                         text="Batch No"
                                         class="label"
-                                        required="true"
                                     />
                                     <Input
                                         id="batchno"
@@ -64,11 +63,12 @@
                                     <Label
                                         text="Status"
                                         class="label"
-                                        required="true"
+                                     
                                     />
                                     <ComboBox
                                         id="documentstatus"
                                         width="400px"
+                                       selectionChange="onStatusChange"
                                     >
                                         <items>
                                             <core:Item text="Submitted" />
@@ -95,7 +95,7 @@
                                     <Label
                                         text="Sent to NIA Date"
                                         class="label"
-                                        required="true"
+                                   
                                     />
                                       <DatePicker
                                         id="nia"
@@ -122,7 +122,7 @@
                                     <Label
                                         text="Bank Name"
                                         class="label"
-                                        required="true"
+                                    
                                     />
                                     <Input
                                         id="bankname"
@@ -133,7 +133,7 @@
                                     <Label
                                         text="Cheque No"
                                         class="label"
-                                        required="true"
+                                     
                                     />
                                     <Input
                                         id="chequeno"
@@ -151,6 +151,21 @@
                                     />
                                     <Input
                                         id="hlremarks"
+                                        width="400px"
+                                    />
+                                </VBox>
+                            </f:fields>
+                        </f:FormElement>
+
+                         <f:FormElement>
+                            <f:fields>
+                                <VBox class="spacingAfter">
+                                    <Label
+                                        text="Approved Amount"
+                                        class="label"
+                                    />
+                                    <Input
+                                        id="approved"
                                         width="400px"
                                     />
                                 </VBox>

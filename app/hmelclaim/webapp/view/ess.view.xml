@@ -1300,7 +1300,7 @@
                                 <Text text="{MainModel>SELECT_DEPENDENTS}" />
                                 <Text text="{MainModel>REQUESTED_AMOUNT}" />
                                 <Button
-                                    icon="sap-icon://arrow-right"
+                                    icon="sap-icon://add"
                                     press="onCustomerPress"
                                 />
                                   <!-- <Button

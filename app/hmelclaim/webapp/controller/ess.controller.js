@@ -1090,6 +1090,8 @@ sap.ui.define([
                 oDialog.close();
             },
 
+            
+
             onSaveFrag: function() {
                 var oView = this.getView();
                 var oDialog = oView.byId("manage");
@@ -1106,6 +1108,7 @@ sap.ui.define([
                     var sBankName = oView.byId("bankname").getValue();
                     var sChequeNo = oView.byId("chequeno").getValue();
                     var sHLRemarks = oView.byId("hlremarks").getValue();
+                    var sApprovedAmount = oView.byId("approved").getValue();
             
                     // Get the settlement date value as a timestamp (in milliseconds)
                     var nSettlementTimestamp = Date.now();
@@ -1123,8 +1126,44 @@ sap.ui.define([
                         CHECK_NO: sChequeNo,
                         BATCH_NO: sBatchNo,
                         BANK_NAME: sBankName,
-                        STATUS: sDocumentStatus
+                        STATUS: sDocumentStatus,
+                        APPROVED_AMOUNT: sApprovedAmount
                     };
+
+                    if (sDocumentStatus === "Claim Settled") {
+                        var errorMessage = "Please fill in all mandatory fields:\n";
+                        var missingFields = [];
+                        if (!sApprovedAmount) {
+                            missingFields.push("Approved Amount");
+                        }
+                        if (!sBankName) {
+                            missingFields.push("Bank Name");
+                        }
+                        if (!sChequeNo) {
+                            missingFields.push("Cheque No");
+                        }
+                        if (!sSettlementDateISO) {
+                            missingFields.push("Settlement Date");
+                        }
+                        if (missingFields.length > 0) {
+                            errorMessage += "- " + missingFields.join(", ") + "\n";
+                            sap.m.MessageBox.error(errorMessage);
+                            return;
+                        }
+                    }
+
+                    if (sDocumentStatus === "Rejected") {
+                        var errorMessage = "Please fill in all mandatory fields:\n";
+                        var missingFields = [];
+                        if (!sHLRemarks) {
+                            missingFields.push("Remarks");
+                        }
+                        if (missingFields.length > 0) {
+                            errorMessage += "- " + missingFields.join(", ") + "\n";
+                            sap.m.MessageBox.error(errorMessage);
+                            return;
+                        }
+                    }
             
                     // Check if the REFNR exists using fetch
                     fetch("/odata/v4/my/statusUpdate(REFNR=" + iClaimId + ",Status='" + sDocumentStatus + "')")
@@ -1153,6 +1192,7 @@ sap.ui.define([
                                             oView.byId("hlremarks").setValue("");
                                             oView.byId("settlementdate").setValue("");
                                             oView.byId("nia").setValue("");
+                                            oView.byId("approved").setValue("");
                                             
                                             oDialog.close();
 
@@ -1187,6 +1227,7 @@ sap.ui.define([
                                             oView.byId("hlremarks").setValue("");
                                             oView.byId("settlementdate").setValue("");
                                             oView.byId("nia").setValue("");
+                                            oView.byId("approved").setValue("");
                                             
                                             oDialog.close();
 
@@ -1211,13 +1252,43 @@ sap.ui.define([
                     console.error('sClaimId is null or undefined');
                     sap.m.MessageBox.error("Invalid Claim ID");
                 }
-            }
-            
-            
-            
+            },
             
 
-          
+            onStatusChange: function(oEvent) {
+                var sDocumentStatus = oEvent.getSource().getSelectedItem().getText(); 
+                var oBankDetails = this.getView().byId("bankname");
+                var oChequeNumber = this.getView().byId("chequeno");
+                var oSettledDate = this.getView().byId("settlementdate");
+                var oApprovedAmount = this.getView().byId("approved");
+                var oHLRemarks = this.getView().byId("hlremarks");
             
+                switch (sDocumentStatus) {
+                    case "Rejected":
+                        oBankDetails.setEnabled(false);
+                        oChequeNumber.setEnabled(false);
+                        oSettledDate.setEnabled(false);
+                        oApprovedAmount.setEnabled(false);
+                        oHLRemarks.setRequired(true); 
+                        break;
+                    case "Claim Settled":
+                        oBankDetails.setEnabled(true);
+                        oChequeNumber.setEnabled(true);
+                        oSettledDate.setEnabled(true);
+                        oApprovedAmount.setEnabled(true);
+                        oHLRemarks.setEnabled(true); 
+                        break;
+                    default:
+                        // Other statuses
+                        oBankDetails.setEnabled(false);
+                        oChequeNumber.setEnabled(false);
+                        oSettledDate.setEnabled(false);
+                        oApprovedAmount.setEnabled(false);
+                        oHLRemarks.setEnabled(false); 
+                        break;
+                }
+            }
+            
+           
         });
     });

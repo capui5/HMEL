@@ -109,7 +109,7 @@ module.exports = cds.service.impl(srv => {
     // });
     srv.on('statusUpdate', async (req) => {
         console.log(req.data);
-        const { REFNR, Status } = req.data;
+        const { REFNR, Status, } = req.data;
    
         try {
             await cds.run(UPSERT.into('MYSERVICE_ZHRMEDICLAIM')
