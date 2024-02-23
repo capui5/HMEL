@@ -1117,9 +1117,6 @@ sap.ui.define([
                 oDialog.close();
             },
 
-            
-
-         
 
             onSaveFrag: function() {
                 var oView = this.getView();
@@ -1156,7 +1153,7 @@ sap.ui.define([
                         BATCH_NO: sBatchNo,
                         BANK_NAME: sBankName,
                         STATUS: sDocumentStatus,
-                        APPROVED_AMOUNT: sApprovedAmount
+                        APPROVED_AMOUNT:parseInt(sApprovedAmount)
                     };
             
                     if (sDocumentStatus === "Claim Settled") {
@@ -1195,7 +1192,7 @@ sap.ui.define([
                     }
             
                     // Check if the REFNR exists using fetch
-                    fetch("/odata/v4/my/statusUpdate(REFNR=" + iClaimId + ",Status='" + sDocumentStatus + "',Batch='" + sBatchNo + "',Nia='" + sNiaISO + "',Remark='" + sHLRemarks + "',Check='" + sChequeNo + "',Bank='" + sBankName + "',Approved='" + sApprovedAmount + "',Settlement='" + sSettlementDateISO + "')"
+                    fetch("/odata/v4/my/statusUpdate(REFNR=" + iClaimId + ",Status='" + sDocumentStatus + "',Batch='" + sBatchNo + "',Nia='" + sNiaISO + "',Remark='" + sHLRemarks + "',Check='" + sChequeNo + "',Bank='" + sBankName + "',Approved=" + sApprovedAmount + ",Settlement='" + sSettlementDateISO + "')"
                     )
                         .then(function(response) {
                             return response.json();
@@ -1203,7 +1200,7 @@ sap.ui.define([
                         .then(function(data) {
                             if (data.success) {
                                 // If REFNR exists, update the status
-                                fetch("/odata/v4/my/statusUpdate(REFNR=" + iClaimId + ",Status='" + sDocumentStatus + "',Batch='" + sBatchNo + "',Nia='" + sNiaISO + "',Remark='" + sHLRemarks + "',Check='" + sChequeNo + "',Bank='" + sBankName + "',Approved='" + sApprovedAmount + "',Settlement='" + sSettlementDateISO + "')", {
+                                fetch("/odata/v4/my/statusUpdate(REFNR=" + iClaimId + ",Status='" + sDocumentStatus + "',Batch='" + sBatchNo + "',Nia='" + sNiaISO + "',Remark='" + sHLRemarks + "',Check='" + sChequeNo + "',Bank='" + sBankName + "',Approved=" + sApprovedAmount + ",Settlement='" + sSettlementDateISO + "')", {
                                     method: "PUT",
                                     headers: {
                                         "Content-Type": "application/json"

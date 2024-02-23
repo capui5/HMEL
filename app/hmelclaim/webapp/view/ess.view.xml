@@ -179,7 +179,7 @@
                                                                 id="startDatePicker1"
                                                                 width="400px"
                                                                 value="{/startDate}"
-                                                                  change="handleStartDateChange"
+                                                                change="handleStartDateChange"
                                                             />
                                                         </VBox>
                                                         <VBox
@@ -1369,11 +1369,8 @@
                         <Column demandPopin="true">
                             <Text text="STATUS" />
                         </Column>
-                        <Column
-                            minScreenWidth="Tablet"
-                            demandPopin="true"
-                            width="8em"
-                        >
+
+                        <Column demandPopin="true">
                             <Text text="Approved Amount" />
                         </Column>
                     </columns>
@@ -1390,7 +1387,6 @@
                                 <Text text="{MainModel>SELECT_DEPENDENTS}" />
                                 <Text text="{MainModel>REQUESTED_AMOUNT}" />
                                 <Text text="{MainModel>STATUS}" />
-                                <!-- <Text text="{MainModel>ZHRMEDICLAIM/STATUS}" /> -->
                                 <Text text="{MainModel>APPROVED_AMOUNT}" />
                             </cells>
                         </ColumnListItem>

@@ -11,12 +11,12 @@
   },
   "HMEL_PROJECT_CLAIMREPORTS": {
     "target": {
-      "object": "ClaimReports"
+      "object": "ClaimReports_view"
     }
   },
   "HMEL_PROJECT_MANAGECALIMS": {
     "target": {
-      "object": "Managecalims"
+      "object": "Managecalims_view"
     }
   }
 }

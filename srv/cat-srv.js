@@ -109,20 +109,7 @@ module.exports = cds.service.impl(srv => {
             return { success: false, message: 'An error occurred during status update. Please try again later.' };
         }
     });
-    // srv.on('statusUpdate', async (req) => {
-    //     console.log(req.data);
-    //     const { REFNR, Status} = req.data;
-
-    //     try {
-    //         await cds.run(UPSERT.into('MYSERVICE_ZHRMEDICLAIM')
-    //             .entries([{ REFNR, STATUS: Status}]));
-
-    //         return { success: true, message: 'Claim status updated successfully' };
-    //     } catch (error) {
-    //         console.error('Error occurred during status update:', error);
-    //         return { success: false, message: 'An error occurred during status update. Please try again later.' };
-    //     }
-    // });
+   
 
     
 

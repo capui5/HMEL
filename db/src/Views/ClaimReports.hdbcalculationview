@@ -31,6 +31,8 @@
     <viewAttributes>
       <viewAttribute id="REFNR"/>
       <viewAttribute id="STATUS"/>
+    
+      <viewAttribute id="APPROVED_AMOUNT"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="MYSERVICE_ZHRMEDICLAIM"/>
@@ -45,6 +47,7 @@
       <viewAttribute id="REQUESTED_AMOUNT"/>
       <viewAttribute id="TREATMENT_FOR_IF_OTHERS"/>
       <viewAttribute id="STATUS"/>
+      <viewAttribute id="APPROVED_AMOUNT"/>
       <viewAttribute hidden="true" id="JOIN$CLAIM_ID$REFNR"/>
     </viewAttributes>
     <calculatedViewAttributes/>
@@ -60,6 +63,7 @@
     </input>
     <input node="Projection_1">
       <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="APPROVED_AMOUNT" source="APPROVED_AMOUNT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CLAIM_ID$REFNR" source="REFNR"/>
     </input>
     <joinAttribute name="JOIN$CLAIM_ID$REFNR"/>
@@ -99,13 +103,15 @@
       <descriptions defaultDescription="REQUESTED_AMOUNT"/>
       <keyMapping columnObjectName="Join_1" columnName="REQUESTED_AMOUNT"/>
     </attribute>
+  
+    <attribute id="APPROVED_AMOUNT" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="APPROVED_AMOUNT"/>
+  
+      <keyMapping columnObjectName="Join_1" columnName="APPROVED_AMOUNT"/>
+  
+    </attribute>
   </attributes>
-  <calculatedAttributes>
-    <calculatedAttribute id="APPROVED_AMOUNT" order="9" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
-      <keyCalculation datatype="INTEGER" expressionLanguage="SQL">
-        <formula>0</formula>
-      </keyCalculation>
-    </calculatedAttribute></calculatedAttributes>
+  <calculatedAttributes/>
   <baseMeasures/>
   <calculatedMeasures/>
   <restrictedMeasures/>

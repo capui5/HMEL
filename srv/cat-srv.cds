@@ -108,7 +108,7 @@ service MyService {
             BATCH_NO        : String(20);
             BANK_NAME       : String(20);
             STATUS          : String(40);
-            APPROVED_AMOUNT : String(40);
+            APPROVED_AMOUNT : Integer;
     }
 
     entity POLICY_DETAILS {
@@ -127,6 +127,6 @@ service MyService {
     function validations(endDate : Date, startDate : Date, requestedAmount : Integer, category : String)                                                                          returns Integer;
     function policyValidations(policyNumber : String, startDate : Date, illnessName : String)                                                                                     returns String;
     // function statusUpdate(REFNR : Integer, Status : String, )                                                                                                                     returns Integer;
-    function statusUpdate(REFNR : Integer, Status : String, Batch : String, Nia : String, Remark : String, Check : String, Bank : String, Approved : String, Settlement : String)  returns Integer;
+    function statusUpdate(REFNR : Integer, Status : String, Batch : String, Nia : String, Remark : String, Check : String, Bank : String, Approved : Integer, Settlement : String)  returns Integer;
 
 }
