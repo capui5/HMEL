@@ -68,7 +68,8 @@
                                     <ComboBox
                                         id="documentstatus"
                                         width="400px"
-                                       selectionChange="onStatusChange"
+                                        selectionChange="onStatusChange"
+                                    
                                     >
                                         <items>
                                             <core:Item text="Submitted" />
@@ -154,12 +155,7 @@
                                         width="400px"
                                     />
                                 </VBox>
-                            </f:fields>
-                        </f:FormElement>
-
-                         <f:FormElement>
-                            <f:fields>
-                                <VBox class="spacingAfter">
+                                 <VBox class="spacingAfter">
                                     <Label
                                         text="Approved Amount"
                                         class="label"

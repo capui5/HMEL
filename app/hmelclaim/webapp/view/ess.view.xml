@@ -179,6 +179,7 @@
                                                                 id="startDatePicker1"
                                                                 width="400px"
                                                                 value="{/startDate}"
+                                                                  change="handleStartDateChange"
                                                             />
                                                         </VBox>
                                                         <VBox
@@ -1303,10 +1304,6 @@
                                     icon="sap-icon://add"
                                     press="onCustomerPress"
                                 />
-                                  <!-- <Button
-                                    icon="sap-icon://approvals"
-                                    press="onCustomerPress"
-                                /> -->
                             </cells>
                         </ColumnListItem>
                     </items>
@@ -1393,7 +1390,7 @@
                                 <Text text="{MainModel>SELECT_DEPENDENTS}" />
                                 <Text text="{MainModel>REQUESTED_AMOUNT}" />
                                 <Text text="{MainModel>STATUS}" />
-                                  <!-- <Text text="{MainModel>ZHRMEDICLAIM/STATUS}" /> -->
+                                <!-- <Text text="{MainModel>ZHRMEDICLAIM/STATUS}" /> -->
                                 <Text text="{MainModel>APPROVED_AMOUNT}" />
                             </cells>
                         </ColumnListItem>

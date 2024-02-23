@@ -124,8 +124,9 @@ service MyService {
     }
 
     // function validations() returns String;
-    function validations(endDate : Date, startDate : Date, requestedAmount : Integer, category : String) returns Integer;
-    function policyValidations(policyNumber : String, startDate : Date, illnessName : String)            returns String;
-       function statusUpdate(REFNR : Integer, Status : String,)            returns Integer;
+    function validations(endDate : Date, startDate : Date, requestedAmount : Integer, category : String)                                                                          returns Integer;
+    function policyValidations(policyNumber : String, startDate : Date, illnessName : String)                                                                                     returns String;
+    // function statusUpdate(REFNR : Integer, Status : String, )                                                                                                                     returns Integer;
+    function statusUpdate(REFNR : Integer, Status : String, Batch : String, Nia : String, Remark : String, Check : String, Bank : String, Approved : String, Settlement : String)  returns Integer;
 
 }

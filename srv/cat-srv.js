@@ -34,7 +34,7 @@ module.exports = cds.service.impl(srv => {
             };
         }
     });
-//VALIDATION FOR POLICY DETAILS//
+    //VALIDATION FOR POLICY DETAILS//
 
     srv.on('policyValidations', async (req) => {
         console.log(req.data)
@@ -89,38 +89,45 @@ module.exports = cds.service.impl(srv => {
         return (date2.getFullYear() - date1.getFullYear()) * 12 + (date2.getMonth() - date1.getMonth());
     }
 
-//Validation for STATUS UPDATE//
-    // srv.on('statusUpdate', async (req) => {
-    //     console.log(req.data);
-    //     const { REFNR, Status } = req.data;
-    
-    //     try {
-    //         async function updateClaimStatus(REFNR, Status) {
-    //             await cds.run(UPDATE('MYSERVICE_ZHRMEDICLAIM').set({ STATUS: Status }).where({ REFNR: REFNR }));
-    //         }
-    
-    //         await updateClaimStatus(REFNR, Status);
-    
-    //         return { success: true, message: 'Claim status updated successfully' };
-    //     } catch (error) {
-    //         console.error('Error occurred during status update:', error);
-    //         return { success: false, message: 'An error occurred during status update. Please try again later.' };
-    //     }
-    // });
+    //Validation for STATUS UPDATE//
     srv.on('statusUpdate', async (req) => {
         console.log(req.data);
-        const { REFNR, Status, } = req.data;
-   
+        const { REFNR, Status,Batch,Nia,Remark,Check,Bank,Approved,Settlement} = req.data;
+
         try {
-            await cds.run(UPSERT.into('MYSERVICE_ZHRMEDICLAIM')
-                .entries([{ REFNR, STATUS: Status }]));
-   
+            async function updateClaimStatus(REFNR, Status,Batch,Nia,Remark,Check,Bank,Approved,Settlement) {
+                await cds.run(UPDATE('MYSERVICE_ZHRMEDICLAIM').set({ REFNR, STATUS: Status, 
+                    BATCH_NO: Batch, NIA_DATE: Nia, HR_REMARKS: Remark, CHECK_NO: Check, 
+                    BANK_NAME: Bank, APPROVED_AMOUNT: Approved, SETTLEMENT_DATE: Settlement }).where({ REFNR: REFNR }));
+            }
+
+            await updateClaimStatus(REFNR, Status,Batch,Nia,Remark,Check,Bank,Approved,Settlement);
+
             return { success: true, message: 'Claim status updated successfully' };
         } catch (error) {
             console.error('Error occurred during status update:', error);
             return { success: false, message: 'An error occurred during status update. Please try again later.' };
         }
     });
+    // srv.on('statusUpdate', async (req) => {
+    //     console.log(req.data);
+    //     const { REFNR, Status} = req.data;
+
+    //     try {
+    //         await cds.run(UPSERT.into('MYSERVICE_ZHRMEDICLAIM')
+    //             .entries([{ REFNR, STATUS: Status}]));
+
+    //         return { success: true, message: 'Claim status updated successfully' };
+    //     } catch (error) {
+    //         console.error('Error occurred during status update:', error);
+    //         return { success: false, message: 'An error occurred during status update. Please try again later.' };
+    //     }
+    // });
+
+    
+
+    
+    
 
 });
 
