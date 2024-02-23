@@ -188,19 +188,24 @@ sap.ui.define([
                     var startDate = this.byId("startDatePicker1").getDateValue().toISOString().split('T')[0];
                     var PolicyNumber = this.byId("PolicyNumber").getSelectedItem().getKey();
                     var illnessName = this.byId("TF").getSelectedKey();
-                    $.ajax({
-                        url: "/odata/v4/my/policyValidations(policyNumber='" + PolicyNumber + "',startDate=" + startDate + ",illnessName='" + illnessName + "')",
-                        method: "GET",
-                        success: function (data) {
+
+                    fetch("/odata/v4/my/policyValidations(policyNumber='" + PolicyNumber + "',startDate=" + startDate + ",illnessName='" + illnessName + "')", {
+                        method: "GET"
+                    })
+                        .then(response => response.json())
+                        .then(data => {
                             if (data.value.success) {
                                 oIconTabBar.setSelectedKey(aItems[iCurrentIndex + 1].getKey());
                             } else {
                                 MessageBox.error(data.value.message);
                                 oIconTabBar.setSelectedKey(sSelectedKey);
                             }
-                        }
+                        })
+                        .catch(error => {
+                            // Handle fetch error
+                            console.error('Error:', error);
+                        });
 
-                    });
                 }
 
             },
@@ -381,21 +386,23 @@ sap.ui.define([
                     MessageBox.error(errorMessage);
                     return;
                 }
-                // AJAX call for additional validation
-                $.ajax({
-                    url: "/odata/v4/my/validations(endDate=" + enddate + ",startDate=" + startdate + ",requestedAmount=" + requestedAmount + `,category='` + category + `')`,
-                    method: "GET",
-                    success: function (data) {
-                        // Check validation result
+
+                fetch("/odata/v4/my/validations(endDate=" + enddate + ",startDate=" + startdate + ",requestedAmount=" + requestedAmount + `,category='` + category + `')`, {
+                    method: "GET"
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
                         if (data.value.success) {
-                            // Check if requested amount is greater than the final amount
                             if (requestedAmount > data.value.finalAmount) {
-                                // Display MessageBox with eligible amount information
                                 var eligibleAmountMessage = "Your eligible amount is: " + data.value.eligibleAmount;
                                 MessageBox.information(eligibleAmountMessage, {
                                     onClose: function (oAction) {
                                         if (oAction === MessageBox.Action.OK) {
-                                            // Create an object to hold the details
                                             var details = {
                                                 category: category,
                                                 doctor: doctor,
@@ -410,29 +417,15 @@ sap.ui.define([
                                                 requestedAmount: data.value.finalAmount,
                                                 review: review,
                                             };
-
-                                            // Add the details to the model
                                             var detailsModel = this.getView().getModel("claimModel");
-
                                             if (!detailsModel) {
-                                                // If the model is not found, create it and set it to the view
                                                 detailsModel = new sap.ui.model.json.JSONModel();
                                                 this.getView().setModel(detailsModel, "claimModel");
                                             }
-
-                                            // Get existing details or initialize an empty array
                                             var allDetails = detailsModel.getProperty("/allDetails") || [];
-
-                                            // Add the new details
                                             allDetails.push(details);
-
-                                            // Set the updated array back to the model
                                             detailsModel.setProperty("/allDetails", allDetails);
-
-                                            // Clear the form
                                             this.clearForm();
-
-                                            // Update total requested amount
                                             this.updateTotalRequestedAmount();
                                         }
                                     }.bind(this)
@@ -452,41 +445,26 @@ sap.ui.define([
                                     requestedAmount: requestedAmount,
                                     review: review,
                                 };
-
-                                // Add the details to the model
                                 var detailsModel = this.getView().getModel("claimModel");
-
                                 if (!detailsModel) {
-                                    // If the model is not found, create it and set it to the view
                                     detailsModel = new sap.ui.model.json.JSONModel();
                                     this.getView().setModel(detailsModel, "claimModel");
                                 }
-
-                                // Get existing details or initialize an empty array
                                 var allDetails = detailsModel.getProperty("/allDetails") || [];
-
-                                // Add the new details
                                 allDetails.push(details);
-
-                                // Set the updated array back to the model
                                 detailsModel.setProperty("/allDetails", allDetails);
-
-                                // Clear the form
                                 this.clearForm();
-
-                                // Update total requested amount
                                 this.updateTotalRequestedAmount();
                             }
                         } else {
-                            // If validation fails, display error message
                             MessageBox.information(data.value.message);
                         }
-                    }.bind(this),
-                    error: function (error) {
-                        // Handle error response
+                    })
+                    .catch(error => {
                         MessageBox.error("Error occurred while fetching data");
-                    }
-                });
+                        console.error('Error:', error);
+                    });
+
             },
 
 
@@ -843,7 +821,7 @@ sap.ui.define([
                 var oEndDatePicker = this.byId("endDatePicker1");
                 var oStartDate = oStartDatePicker.getDateValue();
                 var oEndDate = oEndDatePicker.getDateValue();
-            
+
                 if (oEndDate && oStartDate) {
                     if (oStartDate > oEndDate) {
                         // Start date is after end date, show error message
@@ -858,12 +836,12 @@ sap.ui.define([
                     }
                 }
             },
-            
 
-            
-            
-            
-            
+
+
+
+
+
             updateTotalRequestedAmount: function () {
                 var totalRequestedAmount = 0;
                 var items = this.byId("detailsList").getItems();
@@ -986,8 +964,8 @@ sap.ui.define([
                         });
                 });
             },
-            //UPLOAD START FROM HERE//
 
+            //UPLOAD START FROM HERE//
             onBeforeInitiatingItemUpload: function (oEvent) {
                 // Event triggered before initiating each upload.
             },
@@ -1061,13 +1039,6 @@ sap.ui.define([
                 this._oFilesTobeuploaded = [];
                 this.oItemsProcessor = [];
             },
-
-            // onCustomerPress: function (oEvent) {
-            //     var oButton = oEvent.getSource();
-            //     var sClaimId = oButton.getBindingContext("MainModel").getProperty("CLAIM_ID");
-
-            //     this.onOpenDialog(sClaimId);
-            // },
             onCustomerPress: function (oEvent) {
                 var oButton = oEvent.getSource();
                 var sClaimId = oButton.getBindingContext("MainModel").getProperty("CLAIM_ID");
@@ -1118,16 +1089,16 @@ sap.ui.define([
             },
 
 
-            onSaveFrag: function() {
+            onSaveFrag: function () {
                 var oView = this.getView();
                 var oDialog = oView.byId("manage");
                 var sClaimId = this._sClaimId;
-            
+
                 // Check if sClaimId is not null or undefined
                 if (sClaimId) {
                     // Parse sClaimId as an integer
                     var iClaimId = parseInt(sClaimId);
-            
+
                     // Get all input values
                     var sBatchNo = oView.byId("batchno").getValue();
                     var sDocumentStatus = oView.byId("documentstatus").getValue();
@@ -1135,15 +1106,15 @@ sap.ui.define([
                     var sChequeNo = oView.byId("chequeno").getValue();
                     var sHLRemarks = oView.byId("hlremarks").getValue();
                     var sApprovedAmount = oView.byId("approved").getValue();
-            
+
                     // Get the settlement date value as a timestamp (in milliseconds)
                     var nSettlementTimestamp = Date.now();
                     var sSettlementDateISO = new Date(nSettlementTimestamp).toISOString();
-            
+
                     // Get the NIA date as a timestamp (in milliseconds)
                     var nNia = Date.now();
                     var sNiaISO = new Date(nNia).toISOString();
-            
+
                     var oPayloadZHRMEDICLAIM = {
                         REFNR: iClaimId, // Use the parsed integer value
                         SETTLEMENT_DATE: sSettlementDateISO,
@@ -1153,9 +1124,9 @@ sap.ui.define([
                         BATCH_NO: sBatchNo,
                         BANK_NAME: sBankName,
                         STATUS: sDocumentStatus,
-                        APPROVED_AMOUNT:parseInt(sApprovedAmount)
+                        APPROVED_AMOUNT: parseInt(sApprovedAmount)
                     };
-            
+
                     if (sDocumentStatus === "Claim Settled") {
                         var errorMessage = "Please fill in all mandatory fields:\n";
                         var missingFields = [];
@@ -1177,7 +1148,7 @@ sap.ui.define([
                             return;
                         }
                     }
-            
+
                     if (sDocumentStatus === "Rejected") {
                         var errorMessage = "Please fill in all mandatory fields:\n";
                         var missingFields = [];
@@ -1190,14 +1161,14 @@ sap.ui.define([
                             return;
                         }
                     }
-            
+
                     // Check if the REFNR exists using fetch
                     fetch("/odata/v4/my/statusUpdate(REFNR=" + iClaimId + ",Status='" + sDocumentStatus + "',Batch='" + sBatchNo + "',Nia='" + sNiaISO + "',Remark='" + sHLRemarks + "',Check='" + sChequeNo + "',Bank='" + sBankName + "',Approved=" + sApprovedAmount + ",Settlement='" + sSettlementDateISO + "')"
                     )
-                        .then(function(response) {
+                        .then(function (response) {
                             return response.json();
                         })
-                        .then(function(data) {
+                        .then(function (data) {
                             if (data.success) {
                                 // If REFNR exists, update the status
                                 fetch("/odata/v4/my/statusUpdate(REFNR=" + iClaimId + ",Status='" + sDocumentStatus + "',Batch='" + sBatchNo + "',Nia='" + sNiaISO + "',Remark='" + sHLRemarks + "',Check='" + sChequeNo + "',Bank='" + sBankName + "',Approved=" + sApprovedAmount + ",Settlement='" + sSettlementDateISO + "')", {
@@ -1207,33 +1178,33 @@ sap.ui.define([
                                     },
                                     body: JSON.stringify({})
                                 })
-                                .then(function(response) {
-                                    console.log(response);
-                                    sap.m.MessageBox.success("Claim status updated successfully", {
-                                        onClose: function() {
-                                            // Clear forms
-                                            oView.byId("batchno").setValue("");
-                                            oView.byId("documentstatus").setValue("");
-                                            oView.byId("bankname").setValue("");
-                                            oView.byId("chequeno").setValue("");
-                                            oView.byId("hlremarks").setValue("");
-                                            oView.byId("settlementdate").setValue("");
-                                            oView.byId("nia").setValue("");
-                                            oView.byId("approved").setValue("");
-                                            
-                                            oDialog.close();
-            
-                                            location.reload();
-                                            // Navigate back to detail2
-                                            var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
-                                            oRouter.navTo("detail2");
-                                        }
+                                    .then(function (response) {
+                                        console.log(response);
+                                        sap.m.MessageBox.success("Claim status updated successfully", {
+                                            onClose: function () {
+                                                // Clear forms
+                                                oView.byId("batchno").setValue("");
+                                                oView.byId("documentstatus").setValue("");
+                                                oView.byId("bankname").setValue("");
+                                                oView.byId("chequeno").setValue("");
+                                                oView.byId("hlremarks").setValue("");
+                                                oView.byId("settlementdate").setValue("");
+                                                oView.byId("nia").setValue("");
+                                                oView.byId("approved").setValue("");
+
+                                                oDialog.close();
+
+                                                location.reload();
+                                                // Navigate back to detail2
+                                                var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                                oRouter.navTo("detail2");
+                                            }
+                                        });
+                                    })
+                                    .catch(function (error) {
+                                        console.error('Error occurred during status update:', error);
+                                        sap.m.MessageBox.error("Failed to update claim status");
                                     });
-                                })
-                                .catch(function(error) {
-                                    console.error('Error occurred during status update:', error);
-                                    sap.m.MessageBox.error("Failed to update claim status");
-                                });
                             } else {
                                 // If REFNR does not exist, save the data
                                 fetch("/odata/v4/my/ZHRMEDICLAIM", {
@@ -1243,34 +1214,34 @@ sap.ui.define([
                                     },
                                     body: JSON.stringify(oPayloadZHRMEDICLAIM)
                                 })
-                                .then(function() {
-                                    sap.m.MessageBox.success("Data saved successfully in ZHRMEDICLAIM", {
-                                        onClose: function() {
-                                            // Clear forms
-                                            oView.byId("batchno").setValue("");
-                                            oView.byId("documentstatus").setValue("");
-                                            oView.byId("bankname").setValue("");
-                                            oView.byId("chequeno").setValue("");
-                                            oView.byId("hlremarks").setValue("");
-                                            oView.byId("settlementdate").setValue("");
-                                            oView.byId("nia").setValue("");
-                                            oView.byId("approved").setValue("");
-                                            
-                                            oDialog.close();
-            
-                                            location.reload();
-                                            // Navigate back to detail2
-                                            var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
-                                            oRouter.navTo("detail2");
-                                        }
+                                    .then(function () {
+                                        sap.m.MessageBox.success("Data saved successfully in ZHRMEDICLAIM", {
+                                            onClose: function () {
+                                                // Clear forms
+                                                oView.byId("batchno").setValue("");
+                                                oView.byId("documentstatus").setValue("");
+                                                oView.byId("bankname").setValue("");
+                                                oView.byId("chequeno").setValue("");
+                                                oView.byId("hlremarks").setValue("");
+                                                oView.byId("settlementdate").setValue("");
+                                                oView.byId("nia").setValue("");
+                                                oView.byId("approved").setValue("");
+
+                                                oDialog.close();
+
+                                                location.reload();
+                                                // Navigate back to detail2
+                                                var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                                oRouter.navTo("detail2");
+                                            }
+                                        });
+                                    })
+                                    .catch(function () {
+                                        sap.m.MessageBox.error("Failed to save data in ZHRMEDICLAIM");
                                     });
-                                })
-                                .catch(function() {
-                                    sap.m.MessageBox.error("Failed to save data in ZHRMEDICLAIM");
-                                });
                             }
                         })
-                        .catch(function(error) {
+                        .catch(function (error) {
                             console.error('Error occurred while checking REFNR:', error);
                             sap.m.MessageBox.error("Failed to check REFNR");
                         });
@@ -1280,31 +1251,31 @@ sap.ui.define([
                     sap.m.MessageBox.error("Invalid Claim ID");
                 }
             },
-            
-            
 
-            onStatusChange: function(oEvent) {
-                var sDocumentStatus = oEvent.getSource().getSelectedItem().getText(); 
+
+
+            onStatusChange: function (oEvent) {
+                var sDocumentStatus = oEvent.getSource().getSelectedItem().getText();
                 var oBankDetails = this.getView().byId("bankname");
                 var oChequeNumber = this.getView().byId("chequeno");
                 var oSettledDate = this.getView().byId("settlementdate");
                 var oApprovedAmount = this.getView().byId("approved");
                 var oHLRemarks = this.getView().byId("hlremarks");
-            
+
                 switch (sDocumentStatus) {
                     case "Rejected":
                         oBankDetails.setEnabled(false);
                         oChequeNumber.setEnabled(false);
                         oSettledDate.setEnabled(false);
                         oApprovedAmount.setEnabled(false);
-                        oHLRemarks.setRequired(true); 
+                        oHLRemarks.setRequired(true);
                         break;
                     case "Claim Settled":
                         oBankDetails.setEnabled(true);
                         oChequeNumber.setEnabled(true);
                         oSettledDate.setEnabled(true);
                         oApprovedAmount.setEnabled(true);
-                        oHLRemarks.setEnabled(true); 
+                        oHLRemarks.setEnabled(true);
                         break;
                     default:
                         // Other statuses
@@ -1312,11 +1283,10 @@ sap.ui.define([
                         oChequeNumber.setEnabled(false);
                         oSettledDate.setEnabled(false);
                         oApprovedAmount.setEnabled(false);
-                        oHLRemarks.setEnabled(false); 
+                        oHLRemarks.setEnabled(false);
                         break;
                 }
             }
-            
-           
+
         });
     });

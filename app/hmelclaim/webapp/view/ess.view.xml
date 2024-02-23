@@ -1381,6 +1381,7 @@
                                 <Text text="{MainModel>PERSON_NUMBER}" />
                                 <Text text="{MainModel>CLAIM_TYPE}" />
                                 <Text text="{MainModel>TREATMENT_FOR}" />
+
                                 <Text
                                     text="{MainModel>TREATMENT_FOR_IF_OTHERS}"
                                 />
