@@ -3,27 +3,34 @@ const cds = require('@sap/cds');
 module.exports = cds.service.impl(srv => {
     srv.on('validations', async (req) => {
         const { startDate, endDate, requestedAmount, category } = req.data;
-
+    
         console.log(category);
-
+    
         try {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const durationInMilliseconds = end - start;
+            const durationInDays = durationInMilliseconds / (1000 * 3600 * 24);
+    
             // Fetch the category from the database
-            //const categoryData = await cds.run(SELECT.one('CONSULTANCY_CATEGORY').from('MYSERVICE_CONSULTANCY_CAP_LIMIT').where({ CONSULTANCY_CATEGORY: category }));
             const capAmountData = await cds.run(SELECT.one('CAP_AMOUNT').
                 from('MYSERVICE_CONSULTANCY_CAP_LIMIT').
                 where({ CONSULTANCY_CATEGORY: category }));
-
-
+    
             // Extract the CAP_AMOUNT value
-            const capAmount = capAmountData.CAP_AMOUNT;
-
-            // Compare requested amount with CAP_AMOUNT
-            const finalAmount = Math.min(requestedAmount, capAmount);
-
+            const capAmountPerDay = capAmountData.CAP_AMOUNT;
+    
+            // Calculate the total amount based on duration and cap amount per day
+            const durationAmount = durationInDays * capAmountPerDay;
+    
+            // Compare requested amount with the calculated total amount
+            const finalAmount = Math.min(requestedAmount, durationAmount);
+    
             return {
                 success: true,
                 finalAmount: finalAmount,
-                eligibleAmount: capAmount
+                eligibleAmount: capAmountPerDay,
+                durationInDays: durationInDays
             };
         } catch (error) {
             console.error('Error occurred during database query:', error);
@@ -34,6 +41,10 @@ module.exports = cds.service.impl(srv => {
             };
         }
     });
+    
+
+
+
     //VALIDATION FOR POLICY DETAILS//
 
     srv.on('policyValidations', async (req) => {
@@ -92,16 +103,18 @@ module.exports = cds.service.impl(srv => {
     //Validation for STATUS UPDATE//
     srv.on('statusUpdate', async (req) => {
         console.log(req.data);
-        const { REFNR, Status,Batch,Nia,Remark,Check,Bank,Approved,Settlement} = req.data;
+        const { REFNR, Status, Batch, Nia, Remark, Check, Bank, Approved, Settlement } = req.data;
 
         try {
-            async function updateClaimStatus(REFNR, Status,Batch,Nia,Remark,Check,Bank,Approved,Settlement) {
-                await cds.run(UPDATE('MYSERVICE_ZHRMEDICLAIM').set({ REFNR, STATUS: Status, 
-                    BATCH_NO: Batch, NIA_DATE: Nia, HR_REMARKS: Remark, CHECK_NO: Check, 
-                    BANK_NAME: Bank, APPROVED_AMOUNT: Approved, SETTLEMENT_DATE: Settlement }).where({ REFNR: REFNR }));
+            async function updateClaimStatus(REFNR, Status, Batch, Nia, Remark, Check, Bank, Approved, Settlement) {
+                await cds.run(UPDATE('MYSERVICE_ZHRMEDICLAIM').set({
+                    REFNR, STATUS: Status,
+                    BATCH_NO: Batch, NIA_DATE: Nia, HR_REMARKS: Remark, CHECK_NO: Check,
+                    BANK_NAME: Bank, APPROVED_AMOUNT: Approved, SETTLEMENT_DATE: Settlement
+                }).where({ REFNR: REFNR }));
             }
 
-            await updateClaimStatus(REFNR, Status,Batch,Nia,Remark,Check,Bank,Approved,Settlement);
+            await updateClaimStatus(REFNR, Status, Batch, Nia, Remark, Check, Bank, Approved, Settlement);
 
             return { success: true, message: 'Claim status updated successfully' };
         } catch (error) {
@@ -109,12 +122,12 @@ module.exports = cds.service.impl(srv => {
             return { success: false, message: 'An error occurred during status update. Please try again later.' };
         }
     });
-   
 
-    
 
-    
-    
+
+
+
+
 
 });
 
