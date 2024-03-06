@@ -145,7 +145,6 @@ entity ClaimReports {
     PERSON_NUMBER           : Integer;
     CLAIM_TYPE              : String(40);
     TREATMENT_FOR           : String(40);
-    TREATMENT_FOR_IF_OTHERS : String(40);
     SELECT_DEPENDENTS       : String(40);
     STATUS                  : String;
     REQUESTED_AMOUNT        : Integer;
@@ -154,9 +153,11 @@ entity ClaimReports {
 @cds.persistence.exists
 entity Managecalims {
     CLAIM_ID                : Integer;
+    SUBMITTED_DATE          : Timestamp;
     PERSON_NUMBER           : Integer;
     CLAIM_TYPE              : String(40);
     TREATMENT_FOR           : String(40);
     SELECT_DEPENDENTS       : String(40);
+    CURRENT_STATUS          : String(20);
     REQUESTED_AMOUNT        : Integer;
 }

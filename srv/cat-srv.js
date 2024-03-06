@@ -3,29 +3,29 @@ const cds = require('@sap/cds');
 module.exports = cds.service.impl(srv => {
     srv.on('validations', async (req) => {
         const { startDate, endDate, requestedAmount, category } = req.data;
-    
+
         console.log(category);
-    
+
         try {
             const start = new Date(startDate);
             const end = new Date(endDate);
             const durationInMilliseconds = end - start;
             const durationInDays = durationInMilliseconds / (1000 * 3600 * 24);
-    
+
             // Fetch the category from the database
             const capAmountData = await cds.run(SELECT.one('CAP_AMOUNT').
                 from('MYSERVICE_CONSULTANCY_CAP_LIMIT').
                 where({ CONSULTANCY_CATEGORY: category }));
-    
+
             // Extract the CAP_AMOUNT value
             const capAmountPerDay = capAmountData.CAP_AMOUNT;
-    
+
             // Calculate the total amount based on duration and cap amount per day
             const durationAmount = durationInDays * capAmountPerDay;
-    
+
             // Compare requested amount with the calculated total amount
             const finalAmount = Math.min(requestedAmount, durationAmount);
-    
+
             return {
                 success: true,
                 finalAmount: finalAmount,
@@ -41,7 +41,10 @@ module.exports = cds.service.impl(srv => {
             };
         }
     });
+
     
+    
+
 
 
 
@@ -122,6 +125,57 @@ module.exports = cds.service.impl(srv => {
             return { success: false, message: 'An error occurred during status update. Please try again later.' };
         }
     });
+
+    //Submit to HANA DB
+    
+    srv.on('submitData',async(req)=>{
+        const{claim_id,person_number,claim_type,claim_start_date,claim_end_date,treatment_for,
+            treatment_for_if_others,select_dependents,requested_amount,consultancy_category,
+            medical_store,bill_date,bill_no,bill_amount,discount,approved_amount}=req.data
+
+            try {
+                // Define a function to insert data into HANA database
+                async function submit(claim_id, person_number, claim_type, claim_start_date, claim_end_date, treatment_for,
+                    treatment_for_if_others, select_dependents, requested_amount, consultancy_category,
+                    medical_store, bill_date, bill_no, bill_amount, discount, approved_amount) {
+        
+                    // Use CAP CDS (Core Data Services) to run an INSERT statement
+                    await srv.tx(req).run(INSERT.into('MYSERVICE_CLAIM_DETAILS').entries({
+                        CLAIM_ID: claim_id,
+                        PERSON_NUMBER: person_number,
+                        CLAIM_TYPE: claim_type,
+                        CLAIM_START_DATE: claim_start_date,
+                        CLAIM_END_DATE: claim_end_date,
+                        TREATMENT_FOR: treatment_for,
+                        TREATMENT_FOR_IF_OTHERS: treatment_for_if_others,
+                        SELECT_DEPENDENTS: select_dependents,
+                        REQUESTED_AMOUNT: requested_amount,
+                        CONSULTANCY_CATEGORY: consultancy_category,
+                        MEDICAL_STORE: medical_store,
+                        BILL_DATE: bill_date,
+                        BILL_NO: bill_no,
+                        BILL_AMOUNT: bill_amount,
+                        DISCOUNT: discount,
+                        APPROVED_AMOUNT: approved_amount
+                    }));
+        
+                    console.log('Data inserted successfully.');
+                }
+        
+                // Call the submit function with the provided data
+                await submit(claim_id, person_number, claim_type, claim_start_date, claim_end_date, treatment_for,
+                    treatment_for_if_others, select_dependents, requested_amount, consultancy_category,
+                    medical_store, bill_date, bill_no, bill_amount, discount, approved_amount);
+            } catch (error) {
+                console.error('Error inserting data:', error);
+            }
+        
+         
+    })
+
+
+   
+
 
 
 

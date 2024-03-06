@@ -86,6 +86,7 @@ service MyService {
             TREATMENT_FOR           : String(40);
             TREATMENT_FOR_IF_OTHERS : String(40);
             SELECT_DEPENDENTS       : String(40);
+            SUBMITTED_DATE          : Date;
             REQUESTED_AMOUNT        : Integer;
             CONSULTANCY_CATEGORY    : String(40);
             MEDICAL_STORE           : String(40);
@@ -94,7 +95,8 @@ service MyService {
             BILL_AMOUNT             : Integer;
             DISCOUNT                : Integer;
             // STATUS                  : String;
-            APPROVED_AMOUNT         : Decimal(15, 8);
+            APPROVED_AMOUNT         : Decimal(15, 2);
+            ATTACHMENTS             : LargeBinary;
 
     }
 
@@ -124,9 +126,27 @@ service MyService {
     }
 
     // function validations() returns String;
-    function validations(endDate : Date, startDate : Date, requestedAmount : Integer, category : String)                                                                          returns Integer;
-    function policyValidations(policyNumber : String, startDate : Date, illnessName : String)                                                                                     returns String;
+    function validations(endDate : Date, startDate : Date, requestedAmount : Integer, category : String)                                                                           returns Integer;
+    function policyValidations(policyNumber : String, startDate : Date, illnessName : String)                                                                                      returns String;
     // function statusUpdate(REFNR : Integer, Status : String, )                                                                                                                     returns Integer;
-    function statusUpdate(REFNR : Integer, Status : String, Batch : String, Nia : String, Remark : String, Check : String, Bank : String, Approved : Integer, Settlement : String)  returns Integer;
+    function statusUpdate(REFNR : Integer, Status : String, Batch : String, Nia : String, Remark : String, Check : String, Bank : String, Approved : Integer, Settlement : String) returns Integer;
+
+    function submitData(claim_id : Integer,
+                        person_number : Integer,
+                        claim_type : String,
+                        claim_start_date : Date,
+                        claim_end_date : Date,
+                        treatment_for : String,
+                        treatment_for_if_others : String,
+                        select_dependents : String,
+                        requested_amount : Integer,
+                        consultancy_category : String,
+                        medical_store : String,
+                        bill_date : Date,
+                        bill_no : String,
+                        bill_amount : Integer,
+                        discount : Integer,
+                        approved_amount : Decimal(15, 2))                                                                                                                                 returns Integer;
+
 
 }
